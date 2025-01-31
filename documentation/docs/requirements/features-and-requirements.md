@@ -9,8 +9,8 @@ sidebar_position: 4
 ### *Code Suggestions
 - The system must provide context-aware code suggestions based on user code
 - The system must show whether the code was correct or not
-- The systen should be able to recognize boiler-plate code
-- The systen must provide suggestions inline in the editor
+- The system should be able to recognize boiler-plate code
+- The system must provide suggestions inline in the editor
 ### *Interaction
 - The system must allow the user to determine if the code suggestion is correct or not
 ### *Logging
