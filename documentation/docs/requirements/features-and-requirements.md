@@ -18,7 +18,7 @@ sidebar_position: 4
 - The system must track the frequency that it is being used by a user
 - The system must track how long it takes for a user to accept or reject a suggestion
 ### Education
-- The system should be able to identify common programming mistakes to be used in creating incorect suggestions
+- The system should be able to identify common programming mistakes to be used in creating incorrect suggestions
 - The system should promote critical reflection in programmers who are still learning
 ### Limitations
 - The system should provide a method of reinforcing that a user should not accept code too hastily
@@ -26,7 +26,7 @@ sidebar_position: 4
 
 ## Nonfunctional Requirements
 ### Performance
-- The system's performance for providing suggestions should be with 5 seconds of the normal Copilot experince
+- The system's performance for providing suggestions should be with 5 seconds of the normal Copilot experience
 ### Statistics
 - The system should provide a portal to easily access statistics
 ### User Experience
