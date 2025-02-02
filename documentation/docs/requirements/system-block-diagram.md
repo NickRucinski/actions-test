@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # System Block Diagram
 
-![System Block Diagram](/assets/images/block-diagram.png)
+![System Block Diagram](./assets/images/block-diagram.png)
 
 ## Description
 
