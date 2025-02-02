@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # System Block Diagram
 
-![System Block Diagram](./assets/images/block-diagram.png)
+![block-diagram drawio](https://github.com/user-attachments/assets/10f36440-005d-4542-b76f-d8fd2720e426)
 
 ## Description
 
