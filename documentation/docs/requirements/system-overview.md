@@ -5,7 +5,7 @@ sidebar_position: 1
 # System Overview
 
 ## Project Abstract
-
+This project aims to develop an AI-powered code assistant similar to GitHub Copilot but with an educational focus. Unlike existing solutions, our system integrates rich logging and mistake recognition to track user behavior, promote critical reflection, and reduce over-reliance on AI-generated code. By monitoring how users interact with suggestions, and providing real-time interventions, the system will serve as both a coding assistant and a learning tool for novice programmers. Additionally, a statistics portal will allow users to review their coding habits, helping them improve over time. The system will be designed for seamless integration into an IDE, ensuring minimal disruption to the coding workflow while maintaining a fast response time.
 ## Conceptual Design
 
 ## Background
