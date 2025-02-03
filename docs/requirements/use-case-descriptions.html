@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.3.2">
 <title data-rh="true">Use-case descriptions | Project Copilot Clone 2</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Capstone-Projects-2025-Spring.github.io/project-copilot-clone-2/docs/requirements/use-case-descriptions"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Use-case descriptions | Project Copilot Clone 2"><meta data-rh="true" name="description" content="Actors"><meta data-rh="true" property="og:description" content="Actors"><link data-rh="true" rel="icon" href="/project-copilot-clone-2/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://Capstone-Projects-2025-Spring.github.io/project-copilot-clone-2/docs/requirements/use-case-descriptions"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2025-Spring.github.io/project-copilot-clone-2/docs/requirements/use-case-descriptions" hreflang="en"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2025-Spring.github.io/project-copilot-clone-2/docs/requirements/use-case-descriptions" hreflang="x-default"><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><link rel="stylesheet" href="/project-copilot-clone-2/assets/css/styles.e4cc120d.css">
-<script src="/project-copilot-clone-2/assets/js/runtime~main.b24e6998.js" defer="defer"></script>
+<script src="/project-copilot-clone-2/assets/js/runtime~main.332b0ea9.js" defer="defer"></script>
 <script src="/project-copilot-clone-2/assets/js/main.650001c5.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -12,94 +12,78 @@
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="actors">Actors<a href="#actors" class="hash-link" aria-label="Direct link to Actors" title="Direct link to Actors">​</a></h2>
 <p>Our project has multiple actors, meaning that different use cases are needed to describe how each actor interacts with the system.</p>
 <ul>
-<li><strong>User (beginner programmers)</strong>: Student learning to program, interacting with our Copilot VS Code Extension for code suggestiosn and asking questions about concepts.</li>
-<li><strong>System (Copilot VS Code extension)</strong>: Our AI-driven extension that provides coding suggestions, logs each interaction that the user makes with the system and tracks user progress.</li>
+<li><strong>User (beginner programmers)</strong>: Student learning to program, interacting with our Copilot VS Code Extension for code suggestions and asking questions about concepts.</li>
+<li><strong>AI Model</strong>: The AI model running on our system that will create code suggestions, answer concept questions, and generate quizzes.</li>
 <li><strong>Administrator</strong>: An instructor that wants to monitor students&#x27; progress and review logged data from the system to identify concepts that should be reviewed.</li>
 </ul>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="use-cases">Use Cases<a href="#use-cases" class="hash-link" aria-label="Direct link to Use Cases" title="Direct link to Use Cases">​</a></h2>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case-1-recieving-context-aware-code-suggestions">Use Case 1: Recieving Context-Aware Code Suggestions<a href="#use-case-1-recieving-context-aware-code-suggestions" class="hash-link" aria-label="Direct link to Use Case 1: Recieving Context-Aware Code Suggestions" title="Direct link to Use Case 1: Recieving Context-Aware Code Suggestions">​</a></h3>
-<p>Actors: User, System</p>
+<p>Actors: User, AI Model</p>
 <p><strong>The user wants to get inline code suggestions to assist with a coding assignment and determine if it is correct or incorrect.</strong></p>
 <ol>
 <li><strong>User</strong> begins typing code.</li>
-<li><strong>System</strong> analyzes the context of the code.</li>
-<li><strong>System</strong> generates and displays a correct or incorrect suggestion.</li>
+<li><strong>AI model</strong> analyzes the context of the code and creates a code suggestion (incorrect or correct).</li>
+<li>System displays the AI model suggestion.</li>
 <li><strong>User</strong> reviews the suggestion and determines if it is correct or not.</li>
 <li><strong>User</strong> selects “Accept” if they think the code is right or “Reject” if they believe it is wrong.</li>
-<li><strong>System</strong> logs the user’s choice, time it took for the user to make a decision, and whether or not it was correct.</li>
-<li><em>If the user accepts an incorrect suggestion, the system gives an explanation of the mistake.</em></li>
+<li>System logs the user’s choice, time it took for the user to make a decision, and whether or not it was correct.</li>
+<li><em>If the user accepts an incorrect suggestion, the AI model gives an explanation of the mistake.</em></li>
 </ol>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case-2-asking-inline-questions-about-code">Use Case 2: Asking Inline Questions about Code<a href="#use-case-2-asking-inline-questions-about-code" class="hash-link" aria-label="Direct link to Use Case 2: Asking Inline Questions about Code" title="Direct link to Use Case 2: Asking Inline Questions about Code">​</a></h3>
-<p>Actors: User, System</p>
+<p>Actors: User</p>
 <p><strong>The user wants to ask a question about a specific piece of code inline while coding.</strong></p>
 <ol>
 <li><strong>User</strong> highlights a portion of their code.</li>
-<li><strong>User</strong> clicks on &quot;ask Copilot or Ctrl+I to type a question.</li>
-<li><strong>System</strong> provides an explanation of the code.</li>
+<li><strong>User</strong> clicks on &quot;ask Copilot&quot; to type a question.</li>
+<li><strong>AI model</strong> provides an explanation for the question.</li>
 <li><strong>User</strong> reviews the response.</li>
-<li><strong>System</strong> logs the user’s question and whether the user requested further clarification.</li>
+<li>System logs the user’s question and whether the user requested further clarification.</li>
 </ol>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case-3-asking-questions-in-the-copilot-chat">Use Case 3: Asking Questions in the Copilot chat<a href="#use-case-3-asking-questions-in-the-copilot-chat" class="hash-link" aria-label="Direct link to Use Case 3: Asking Questions in the Copilot chat" title="Direct link to Use Case 3: Asking Questions in the Copilot chat">​</a></h3>
-<p>Actors: User, System</p>
+<p>Actors: User, AI Model</p>
 <p><strong>The user wants to ask a general programming question about a coding concept.</strong></p>
 <ol>
-<li><strong>User</strong> opens copilot chat.</li>
+<li><strong>User</strong> opens ai model chat.</li>
 <li><strong>User</strong> types a question (e.g. &quot;How do for loops work in Java?&quot;)</li>
-<li><strong>System</strong> processes the question and returns an answer</li>
+<li><strong>AI model</strong> processes the question and returns an answer.</li>
 <li><strong>User</strong> reviews the response.</li>
-<li><strong>System</strong> logs the user’s question and whether the user requested further clarification.</li>
+<li>System logs the user’s question and whether the user requested further clarification.</li>
 </ol>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case-4-logging-decision-time-for-code-suggestions">Use Case 4: Logging Decision Time for Code Suggestions<a href="#use-case-4-logging-decision-time-for-code-suggestions" class="hash-link" aria-label="Direct link to Use Case 4: Logging Decision Time for Code Suggestions" title="Direct link to Use Case 4: Logging Decision Time for Code Suggestions">​</a></h3>
-<p>Actors: User, System</p>
-<p><strong>The system wants to track how long a user takes to accept or reject a suggestion to ensure the user is actually engaging with the code.</strong></p>
+<p>Actors: User, AI Model</p>
+<p><strong>The system has to track how long a user takes to accept or reject a suggestion to ensure the user is actually engaging with the code.</strong></p>
 <ol>
-<li><strong>System</strong> begins a timer when it suggests code to the user.</li>
+<li>System begins a timer when it suggests code to the user.</li>
 <li><strong>User</strong> reviews the suggestion (as quickly or slowly as they want).</li>
 <li><strong>User</strong> accepts or rejects the suggestion.</li>
-<li><strong>System</strong> stops the timer and logs the response time.</li>
-<li>*If the user consistently makes quick and random wrong selections, the system flags them for potential disengagement or lack of knowledge on the subject matter. *</li>
+<li>System stops the timer and logs the response time.</li>
+<li><em>If the user consistently makes quick and random wrong selections, the system flags them for potential disengagement or lack of knowledge on the subject matter.</em></li>
 </ol>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case-5-recieving-feedback-after-selecting-a-suggestion">Use Case 5: Recieving Feedback After Selecting a Suggestion.<a href="#use-case-5-recieving-feedback-after-selecting-a-suggestion" class="hash-link" aria-label="Direct link to Use Case 5: Recieving Feedback After Selecting a Suggestion." title="Direct link to Use Case 5: Recieving Feedback After Selecting a Suggestion.">​</a></h3>
-<p>Actors: User, System</p>
+<p>Actors: User</p>
 <p><strong>The user wants to recieve feedback on whether they correctly identified a suggestion as right or wrong.</strong></p>
 <ol>
 <li><strong>User</strong> accepts or rejects a suggestion.</li>
-<li><strong>System</strong> determines if the user&#x27;s choice was correct.</li>
-<li><em>If the <strong>user</strong> chose correctly, <strong>system</strong> provides confirmation.</em></li>
-<li><em>If the <strong>user</strong> chose incorrectly, <strong>system</strong> provides an explanation of the mistake.</em></li>
-<li><strong>System</strong> logs the mistake for admin review.</li>
+<li>System determines if the user&#x27;s choice was correct.</li>
+<li><em>If the <strong>user</strong> chose correctly, system provides confirmation.</em></li>
+<li><em>If the <strong>user</strong> chose incorrectly, system provides an explanation of the mistake.</em></li>
+<li>System logs the mistake for admin review.</li>
 </ol>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case-6-tracking-and-logging-user-decisions">Use Case 6: Tracking and Logging User Decisions<a href="#use-case-6-tracking-and-logging-user-decisions" class="hash-link" aria-label="Direct link to Use Case 6: Tracking and Logging User Decisions" title="Direct link to Use Case 6: Tracking and Logging User Decisions">​</a></h3>
-<p>Actors: System</p>
-<p><strong>The system wants to track user engagement, correctness, and common errors.</strong></p>
+<p><strong>The system has to track user engagement, correctness, and common errors.</strong></p>
 <ol>
-<li><strong>System</strong> logs each accepted or rejected code suggestion.</li>
-<li><strong>System</strong> tracks if the choice was correct or incorrect.</li>
-<li><strong>System</strong> records how long the user took to decide on accepting or rejecting.</li>
-<li><em>If user frequently accepts incorrect suggestions, <strong>system</strong> logs recurring mistakes for admin review.</em></li>
-<li>*If multiple users make the same mistakes, <strong>system</strong> flags the concept as a struggle area.</li>
+<li>System logs each accepted or rejected code suggestion.</li>
+<li>System tracks if the choice was correct or incorrect.</li>
+<li>System records how long the user took to decide on accepting or rejecting.</li>
+<li><em>If user frequently accepts incorrect suggestions, system logs recurring mistakes for admin review.</em></li>
+<li><em>If multiple users make the same mistakes, system flags the concept as a struggle area.</em></li>
 </ol>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case-7-identifying-common-student-mistakes">Use Case 7: Identifying Common Student Mistakes<a href="#use-case-7-identifying-common-student-mistakes" class="hash-link" aria-label="Direct link to Use Case 7: Identifying Common Student Mistakes" title="Direct link to Use Case 7: Identifying Common Student Mistakes">​</a></h3>
-<h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case----locking-out-users-after-multiple-incorrect-suggestions">Use Case - : Locking Out Users after Multiple Incorrect Suggestions.<a href="#use-case----locking-out-users-after-multiple-incorrect-suggestions" class="hash-link" aria-label="Direct link to Use Case - : Locking Out Users after Multiple Incorrect Suggestions." title="Direct link to Use Case - : Locking Out Users after Multiple Incorrect Suggestions.">​</a></h3>
-<p>Actors: User, System</p>
-<p><strong>The system wants to prevent the user from accepting more wrong suggestions after making too many mistakes</strong></p>
+<p>**The AI model will identify patterns that the system has logged based on incorrect acceptionns and user struggles.</p>
 <ol>
-<li><strong>User</strong> accepts incorrect suggestions too many times</li>
-<li><strong>System</strong> tracks their mistakes</li>
-<li><em>If the user made too many mistakes or was too disengaged</em>
-<ol>
-<li><strong>System</strong> temporarily will lock out the user from getting more suggestions.</li>
-<li><strong>System</strong> will give learning resources or a quiz to allow users to recieve more suggestions again</li>
-<li><strong>User</strong> will take quiz</li>
-<li><strong>System</strong> will log the quiz completion and allow the user to get code suggestions again.</li>
-</ol>
-</li>
-</ol>
-<h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case---generating-learning-reports-for-administrators">Use Case -: Generating Learning Reports for Administrators<a href="#use-case---generating-learning-reports-for-administrators" class="hash-link" aria-label="Direct link to Use Case -: Generating Learning Reports for Administrators" title="Direct link to Use Case -: Generating Learning Reports for Administrators">​</a></h3>
-<p>Actors: System, Administrator</p>
-<p><strong>System copiles the user data into a detailed report for the administrator.</strong></p>
-<h3 class="anchor anchorWithStickyNavbar_LWe7" id="use-case---monitering-users-progress">Use Case -: Monitering Users&#x27; Progress<a href="#use-case---monitering-users-progress" class="hash-link" aria-label="Direct link to Use Case -: Monitering Users&#x27; Progress" title="Direct link to Use Case -: Monitering Users&#x27; Progress">​</a></h3>
-<p>Actors: Administrator, System</p>
-<p><strong>The Administrator wants to track students&#x27; learning and figure out the conceptst that students might need extra review on.</strong></p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/Capstone-Projects-2025-Spring/project-copilot-clone-2/edit/main/documentation/docs/requirements/use-case-descriptions.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><details><summary>Revision History</summary><table><thead><tr><th scope="row">Author</th><th scope="row">Revision</th><th scope="row">Date</th></tr></thead><tbody>nothing</tbody></table></details><span class="theme-last-updated">Last updated<!-- --> by <b>Nick Rucinski</b></span></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/project-copilot-clone-2/docs/requirements/features-and-requirements"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Features and Requirements</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/project-copilot-clone-2/docs/category/system-architecture"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">System Architecture</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#actors" class="table-of-contents__link toc-highlight">Actors</a></li><li><a href="#use-cases" class="table-of-contents__link toc-highlight">Use Cases</a><ul><li><a href="#use-case-1-recieving-context-aware-code-suggestions" class="table-of-contents__link toc-highlight">Use Case 1: Recieving Context-Aware Code Suggestions</a></li><li><a href="#use-case-2-asking-inline-questions-about-code" class="table-of-contents__link toc-highlight">Use Case 2: Asking Inline Questions about Code</a></li><li><a href="#use-case-3-asking-questions-in-the-copilot-chat" class="table-of-contents__link toc-highlight">Use Case 3: Asking Questions in the Copilot chat</a></li><li><a href="#use-case-4-logging-decision-time-for-code-suggestions" class="table-of-contents__link toc-highlight">Use Case 4: Logging Decision Time for Code Suggestions</a></li><li><a href="#use-case-5-recieving-feedback-after-selecting-a-suggestion" class="table-of-contents__link toc-highlight">Use Case 5: Recieving Feedback After Selecting a Suggestion.</a></li><li><a href="#use-case-6-tracking-and-logging-user-decisions" class="table-of-contents__link toc-highlight">Use Case 6: Tracking and Logging User Decisions</a></li><li><a href="#use-case-7-identifying-common-student-mistakes" class="table-of-contents__link toc-highlight">Use Case 7: Identifying Common Student Mistakes</a></li><li><a href="#use-case----locking-out-users-after-multiple-incorrect-suggestions" class="table-of-contents__link toc-highlight">Use Case - : Locking Out Users after Multiple Incorrect Suggestions.</a></li><li><a href="#use-case---generating-learning-reports-for-administrators" class="table-of-contents__link toc-highlight">Use Case -: Generating Learning Reports for Administrators</a></li><li><a href="#use-case---monitering-users-progress" class="table-of-contents__link toc-highlight">Use Case -: Monitering Users&#39; Progress</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="footer"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/project-copilot-clone-2/docs/intro">Documentation</a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/Capstone-Projects-2025-Spring/project-copilot-clone-2" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="margin-bottom--sm"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--dark_xIcU"></div><div class="footer__copyright">Copyright © 2025 Project Copilot Clone 2, Inc. Built with Docusaurus.</div></div></div></footer></div>
+<li>System records incorrect suggestions that user accepts.</li>
+<li>The AI model analyzes repeated mistakes, and extracts the concepts that need work.</li>
+<li>The concept extracted by the model will be flagged by the system to be reviewed by the administrator.</li>
+</ol></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/Capstone-Projects-2025-Spring/project-copilot-clone-2/edit/main/documentation/docs/requirements/use-case-descriptions.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><details><summary>Revision History</summary><table><thead><tr><th scope="row">Author</th><th scope="row">Revision</th><th scope="row">Date</th></tr></thead><tbody>nothing</tbody></table></details><span class="theme-last-updated">Last updated<!-- --> by <b>Nick Rucinski</b></span></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/project-copilot-clone-2/docs/requirements/features-and-requirements"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Features and Requirements</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/project-copilot-clone-2/docs/category/system-architecture"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">System Architecture</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#actors" class="table-of-contents__link toc-highlight">Actors</a></li><li><a href="#use-cases" class="table-of-contents__link toc-highlight">Use Cases</a><ul><li><a href="#use-case-1-recieving-context-aware-code-suggestions" class="table-of-contents__link toc-highlight">Use Case 1: Recieving Context-Aware Code Suggestions</a></li><li><a href="#use-case-2-asking-inline-questions-about-code" class="table-of-contents__link toc-highlight">Use Case 2: Asking Inline Questions about Code</a></li><li><a href="#use-case-3-asking-questions-in-the-copilot-chat" class="table-of-contents__link toc-highlight">Use Case 3: Asking Questions in the Copilot chat</a></li><li><a href="#use-case-4-logging-decision-time-for-code-suggestions" class="table-of-contents__link toc-highlight">Use Case 4: Logging Decision Time for Code Suggestions</a></li><li><a href="#use-case-5-recieving-feedback-after-selecting-a-suggestion" class="table-of-contents__link toc-highlight">Use Case 5: Recieving Feedback After Selecting a Suggestion.</a></li><li><a href="#use-case-6-tracking-and-logging-user-decisions" class="table-of-contents__link toc-highlight">Use Case 6: Tracking and Logging User Decisions</a></li><li><a href="#use-case-7-identifying-common-student-mistakes" class="table-of-contents__link toc-highlight">Use Case 7: Identifying Common Student Mistakes</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="footer"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/project-copilot-clone-2/docs/intro">Documentation</a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/Capstone-Projects-2025-Spring/project-copilot-clone-2" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="margin-bottom--sm"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--dark_xIcU"></div><div class="footer__copyright">Copyright © 2025 Project Copilot Clone 2, Inc. Built with Docusaurus.</div></div></div></footer></div>
 </body>
 </html>
