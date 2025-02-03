@@ -5,6 +5,7 @@ sidebar_position: 5
 # Use-case descriptions
 
 ![usecase-diagram drawio](https://github.com/user-attachments/assets/86431fe1-9930-4664-9f82-1886c0415d87)
+
 **Figure 1.** UML Use Case Diagram of the *Github Copilot Clone* application.
 
 ## Actors
