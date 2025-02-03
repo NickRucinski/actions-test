@@ -95,4 +95,48 @@ Actors: User
 
 1. System records incorrect suggestions that user accepts. 
 2. The AI model analyzes repeated mistakes, and extracts the concepts that need work. 
-3. The concept extracted by the model will be flagged by the system to be reviewed by the administrator. 
+3. The concept extracted by the model will be flagged by the system to be reviewed by the administrator.
+
+####Use Case 8: Identifying Common Student Mistakes 
+
+Actors: AI Model 
+**System identifies patterns in incorrect suggestions and concepts the user struggles with. 
+
+1. AI Model keeps logs of its own suggestions.  
+2. AI Model tracks key points in the suggested code that the user continuously mistakes as correct.  
+3. AI Model suggests similar code to the user that builds knowledge for the concepts that are struggled with.  
+4. If the incorrect suggestion is chosen again, the pattern will be updated based on the user's response.  
+5. New suggestions will be made that will allow the user to learn from their mistakes.  
+
+####Use Case 9: Generating Learning Reports for Administrators
+
+Actors: AI Model, Administrator
+**System compiles the user data into a detailed report for instructors. 
+
+1. AI Model will keep track of the users selections on different code prompts.  
+2. The users performance data will be placed into a formatted report for the instructor.  
+3. Report will show percentages for the users answers to the code suggestions that were either correct or incorrect.  
+4. The administrator can see which areas of learning need more focus for the user (student).  
+
+####Use Case 10: Monitoring User’s (Student) Progress
+
+Actors: Administrator, AI Model 
+**Administrator wants to track students’ learning and figure out concepts that might need extra review.
+
+1. AI Model will show the users weekly or monthly progress from the detailed report.  
+2. AI Model will show a breakdown of computer science topics that the user has been struggling with the most.  
+3. The Administrator can view different students' progress on a weekly basis and see if areas that need improvement are getting better, plateauing, or declining.  
+4. If multiple students are making similar errors in the same areas of their code, extra review on these topics can be implemented.  
+
+####Use Case 11: AI Generated Quiz Based off Previous Topics
+
+Actors: User, AI Model
+**The AI Model will supply the user with a weekly quiz on topics that were in the code suggestions the week prior.  
+
+1. AI Model will log topics that are discussed throughout each week.  
+2. AI Model will determine which areas students need most improvement in based off of their learning reports.  
+3. AI Model generates the quiz and makes it available to the users.  
+4. The User takes a new quiz every week.  
+5. AI Model tracks correct and incorrect quiz responses and makes results available to both the user and the administrator.  
+6. The User can view their results as well as a review on why they answered incorrectly on some questions if necessary.  
+
