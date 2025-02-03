@@ -91,16 +91,16 @@ Actors: User
 
 ### Use Case 7: Identifying Common Student Mistakes
 
-**The AI model will identify patterns that the system has logged based on incorrect acceptionns and user struggles. 
+**The AI model will identify patterns that the system has logged based on incorrect acceptionns and user struggles.** 
 
 1. System records incorrect suggestions that user accepts. 
 2. The AI model analyzes repeated mistakes, and extracts the concepts that need work. 
 3. The concept extracted by the model will be flagged by the system to be reviewed by the administrator.
 
-####Use Case 8: Identifying Common Student Mistakes 
+### Use Case 8: Identifying Common Student Mistakes 
 
 Actors: AI Model 
-**System identifies patterns in incorrect suggestions and concepts the user struggles with. 
+**System identifies patterns in incorrect suggestions and concepts the user struggles with.** 
 
 1. AI Model keeps logs of its own suggestions.  
 2. AI Model tracks key points in the suggested code that the user continuously mistakes as correct.  
@@ -108,30 +108,30 @@ Actors: AI Model
 4. If the incorrect suggestion is chosen again, the pattern will be updated based on the user's response.  
 5. New suggestions will be made that will allow the user to learn from their mistakes.  
 
-####Use Case 9: Generating Learning Reports for Administrators
+### Use Case 9: Generating Learning Reports for Administrators
 
 Actors: AI Model, Administrator
-**System compiles the user data into a detailed report for instructors. 
+**System compiles the user data into a detailed report for instructors.** 
 
 1. AI Model will keep track of the users selections on different code prompts.  
 2. The users performance data will be placed into a formatted report for the instructor.  
 3. Report will show percentages for the users answers to the code suggestions that were either correct or incorrect.  
 4. The administrator can see which areas of learning need more focus for the user (student).  
 
-####Use Case 10: Monitoring User’s (Student) Progress
+### Use Case 10: Monitoring User’s (Student) Progress
 
 Actors: Administrator, AI Model 
-**Administrator wants to track students’ learning and figure out concepts that might need extra review.
+**Administrator wants to track students’ learning and figure out concepts that might need extra review.**
 
 1. AI Model will show the users weekly or monthly progress from the detailed report.  
 2. AI Model will show a breakdown of computer science topics that the user has been struggling with the most.  
 3. The Administrator can view different students' progress on a weekly basis and see if areas that need improvement are getting better, plateauing, or declining.  
 4. If multiple students are making similar errors in the same areas of their code, extra review on these topics can be implemented.  
 
-####Use Case 11: AI Generated Quiz Based off Previous Topics
+### Use Case 11: AI Generated Quiz Based off Previous Topics
 
 Actors: User, AI Model
-**The AI Model will supply the user with a weekly quiz on topics that were in the code suggestions the week prior.  
+**The AI Model will supply the user with a weekly quiz on topics that were in the code suggestions the week prior.**  
 
 1. AI Model will log topics that are discussed throughout each week.  
 2. AI Model will determine which areas students need most improvement in based off of their learning reports.  
