@@ -12,28 +12,31 @@
 
 
 ## Keywords
-**Todo**
-Section #, as well as any words that quickly give your peers insights into the application like programming language, development platform, type of application, etc.
+Section 001
+GitHub Copilot Clone, generative AI, AI coding assistants, Education Technology, VS Code Extension, early programmers
 
 ## Project Abstract
 
-The goal is to develop a GitHub Copilot clone that functions similarly but includes rich logging capabilities to monitor user behavior. This project addresses the problem of novices misusing AI coding assistants by providing educational interventions when mistakes are made.
+This project aims to develop an AI-powered code assistant similar to GitHub Copilot but with an educational focus. Unlike existing solutions, our system integrates rich logging and mistake recognition to track user behavior, promote critical reflection, and reduce over-reliance on AI-generated code. By monitoring how users interact with suggestions, and providing real-time interventions, the system will serve as both a coding assistant and a learning tool for novice programmers. Additionally, a statistics portal will allow users to review their coding habits, helping them improve over time. The system will be designed for seamless integration into an IDE, ensuring minimal disruption to the coding workflow while maintaining a fast response time.
 
 ## High Level Requirement
-**Todo**
-Describe the requirements – i.e., what the product does and how it does it from a user point of view – at a high level.
+
+The Copilot extension for beginner programmers provides real-time inline coding suggestions as users type, offering both correct and incorrect options to encourage critical thinking. Users can ask questions inline or in a chat about specific code snippets or general programming concepts, and the system responds with explanations while tracking engagement and learning patterns. The extension also logs user interactions, including response time, correctness, and frequently asked questions, allowing instructors to monitor student progress through a dashboard, identify common mistakes, and assign targeted interventions to improve learning outcomes. 🚀
 
 ## Conceptual Design
-**Todo**
-Describe the initial design concept: Hardware/software architecture, programming language, operating system, etc.
+This project will leverage an AI model and API, such as Github's Copilot or OpenAI's Chat GPT, to provide inline code suggestions from a Visual Studio Code extension. The extension will record various statistics for how the suggestions are used and send them to a server. Using our backend we will then be able to display the statistics in a dashboard for the user to be able to track how they are doing.
 
 ## Background
-**Todo**
-The background will contain a more detailed description of the product and a comparison to existing similar projects/products. A literature search should be conducted and the results listed. Proper citation of sources is required. If there are similar open-source products, you should state whether existing source will be used and to what extent. If there are similar closed-source/proprietary products, you should state how the proposed product will be similar and different.
+AI-powered code assistants like OpenAI's Chat GPT and Github's Copilot have revolutionized software development, enabling programmers to write code faster and with fewer errors. However, they have also hindered the abilities of more novice programmers. These programmers will accept the solution they are given often times without fully understanding the concepts and in some cases without reading the solution. This can lead to a lot of poor programming practices. Our project is trying to address this by implementing a system the provides these intelligent code suggestions but requires the user to fully understand the code they are getting suggested before it is placed in their project. With this approach we hope that AI coding assistance can still be used by newer programmers while still promoting learning and good programming habits.
 
 ## Required Resources
-**Todo**
-Discuss what you need to develop this project. This includes background information you will need to acquire, hardware resources, and software resources. If these are not part of the standard Computer Science Department lab resources, these must be identified early and discussed with the instructor.
+**Users will need**:
+- An internet connection
+- An IDE with support for plugins
+
+**Code Maintenance and Documentation:**
+- Git and Github for version control
+- Docusaurus for documentation
 
 ## Collaborators
 
