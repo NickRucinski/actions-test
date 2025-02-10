@@ -17,7 +17,7 @@ Our project has multiple actors, meaning that different use cases are needed to 
 
 ## Use Cases
 
-### Use Case 1: Recieving Context-Aware Code Suggestions
+### Use Case 1: Receiving Context-Aware Code Suggestions
 
 Actors: User, AI Model
 
@@ -25,11 +25,11 @@ Actors: User, AI Model
 
 1. **User** begins typing code.
 2. **AI model** analyzes the context of the code and creates a code suggestion (incorrect or correct).
-3. System displays the AI model suggestion.  
+3. System displays the **AI model** suggestion.  
 4. **User** reviews the suggestion and determines if it is correct or not. 
 5. **User** selects “Accept” if they think the code is right or “Reject” if they believe it is wrong.
 6. System logs the user’s choice, time it took for the user to make a decision, and whether or not it was correct. 
-7. *If the user accepts an incorrect suggestion, the AI model gives an explanation of the mistake.*
+7. *If the user accepts an incorrect suggestion, the **AI model** gives an explanation of the mistake.*
 
 ### Use Case 2: Asking Inline Questions about Code
 
@@ -68,16 +68,16 @@ Actors: User, AI Model
 5. *If the user consistently makes quick and random wrong selections, the system flags them for potential disengagement or lack of knowledge on the subject matter.*
 
 
-### Use Case 5: Recieving Feedback After Selecting a Suggestion. 
+### Use Case 5: Receiving Feedback After Selecting a Suggestion. 
 
 Actors: User
 
-**The user wants to recieve feedback on whether they correctly identified a suggestion as right or wrong.**
+**The user wants to receive feedback on whether they correctly identified a suggestion as right or wrong.**
 
 1. **User** accepts or rejects a suggestion.   
 2. System determines if the user's choice was correct. 
-3. *If the **user** chose correctly, system provides confirmation.*
-4. *If the **user** chose incorrectly, system provides an explanation of the mistake.* 
+3. *If the **user** chooses correctly, system provides confirmation.*
+4. *If the **user** chooses incorrectly, system provides an explanation of the mistake.* 
 5. System logs the mistake for admin review. 
 
 ### Use Case 6: Tracking and Logging User Decisions
@@ -91,21 +91,21 @@ Actors: User
 5. *If multiple users make the same mistakes, system flags the concept as a struggle area.*
 
 ### Use Case 7: Identifying Common Student Mistakes
-
-**The AI model will identify patterns that the system has logged based on incorrect acceptionns and user struggles.** 
+Actors: AI Model
+**The AI model will identify patterns that the system has logged based on incorrect suggestions and user struggles.** 
 
 1. System records incorrect suggestions that user accepts. 
-2. The AI model analyzes repeated mistakes, and extracts the concepts that need work. 
+2. The **AI model** analyzes repeated mistakes, and extracts the concepts that need work. 
 3. The concept extracted by the model will be flagged by the system to be reviewed by the administrator.
 
 ### Use Case 8: Identifying Common Student Mistakes 
 
-Actors: AI Model 
+Actors: AI Model
 **System identifies patterns in incorrect suggestions and concepts the user struggles with.** 
 
-1. AI Model keeps logs of its own suggestions.  
-2. AI Model tracks key points in the suggested code that the user continuously mistakes as correct.  
-3. AI Model suggests similar code to the user that builds knowledge for the concepts that are struggled with.  
+1. **AI Model** keeps logs of its own suggestions.  
+2. **AI Model** tracks key points in the suggested code that the user continuously mistakes as correct.  
+3. **AI Model** suggests similar code to the user that builds knowledge for the concepts that are struggled with.  
 4. If the incorrect suggestion is chosen again, the pattern will be updated based on the user's response.  
 5. New suggestions will be made that will allow the user to learn from their mistakes.  
 
@@ -114,8 +114,8 @@ Actors: AI Model
 Actors: AI Model, Administrator
 **System compiles the user data into a detailed report for instructors.** 
 
-1. AI Model will keep track of the users selections on different code prompts.  
-2. The users performance data will be placed into a formatted report for the instructor.  
+1. **AI Model** will keep track of the users selections on different code prompts.  
+2. The user's performance data will be placed into a formatted report for the instructor.  
 3. Report will show percentages for the users answers to the code suggestions that were either correct or incorrect.  
 4. The administrator can see which areas of learning need more focus for the user (student).  
 
@@ -124,9 +124,9 @@ Actors: AI Model, Administrator
 Actors: Administrator, AI Model 
 **Administrator wants to track students’ learning and figure out concepts that might need extra review.**
 
-1. AI Model will show the users weekly or monthly progress from the detailed report.  
-2. AI Model will show a breakdown of computer science topics that the user has been struggling with the most.  
-3. The Administrator can view different students' progress on a weekly basis and see if areas that need improvement are getting better, plateauing, or declining.  
+1. **AI Model** will show the users weekly or monthly progress from the detailed report.  
+2. **AI Model** will show a breakdown of computer science topics that the user has been struggling with the most.  
+3. The **Administrator** can view different students' progress on a weekly basis and see if areas that need improvement are getting better, plateauing, or declining.  
 4. If multiple students are making similar errors in the same areas of their code, extra review on these topics can be implemented.  
 
 ### Use Case 11: AI Generated Quiz Based off Previous Topics
@@ -134,10 +134,10 @@ Actors: Administrator, AI Model
 Actors: User, AI Model
 **The AI Model will supply the user with a weekly quiz on topics that were in the code suggestions the week prior.**  
 
-1. AI Model will log topics that are discussed throughout each week.  
-2. AI Model will determine which areas students need most improvement in based off of their learning reports.  
-3. AI Model generates the quiz and makes it available to the users.  
+1. **AI Model** will log topics that are discussed throughout each week.  
+2. **AI Model** will determine which areas students need most improvement in based off of their learning reports.  
+3. **AI Model** generates the quiz and makes it available to the users.  
 4. The User takes a new quiz every week.  
-5. AI Model tracks correct and incorrect quiz responses and makes results available to both the user and the administrator.  
-6. The User can view their results as well as a review on why they answered incorrectly on some questions if necessary.  
+5. **AI Model** tracks correct and incorrect quiz responses and makes results available to both the user and the administrator.  
+6. The **User** can view their results as well as a review on why they answered incorrectly on some questions if necessary.  
 
