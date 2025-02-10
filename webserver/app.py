@@ -20,6 +20,7 @@ def generate():
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
 
+    # TODO implement streaming
     try:
         response = requests.post(
             OLLAMA_URL,
