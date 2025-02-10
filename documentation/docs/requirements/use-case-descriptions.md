@@ -92,6 +92,7 @@ Actors: User
 
 ### Use Case 7: Identifying Common Student Mistakes
 Actors: AI Model
+
 **The AI model will identify patterns that the system has logged based on incorrect suggestions and user struggles.** 
 
 1. System records incorrect suggestions that user accepts. 
@@ -101,6 +102,7 @@ Actors: AI Model
 ### Use Case 8: Identifying Common Student Mistakes 
 
 Actors: AI Model
+
 **System identifies patterns in incorrect suggestions and concepts the user struggles with.** 
 
 1. **AI Model** keeps logs of its own suggestions.  
@@ -112,6 +114,7 @@ Actors: AI Model
 ### Use Case 9: Generating Learning Reports for Administrators
 
 Actors: AI Model, Administrator
+
 **System compiles the user data into a detailed report for instructors.** 
 
 1. **AI Model** will keep track of the users selections on different code prompts.  
@@ -122,6 +125,7 @@ Actors: AI Model, Administrator
 ### Use Case 10: Monitoring User’s (Student) Progress
 
 Actors: Administrator, AI Model 
+
 **Administrator wants to track students’ learning and figure out concepts that might need extra review.**
 
 1. **AI Model** will show the users weekly or monthly progress from the detailed report.  
@@ -132,6 +136,7 @@ Actors: Administrator, AI Model
 ### Use Case 11: AI Generated Quiz Based off Previous Topics
 
 Actors: User, AI Model
+
 **The AI Model will supply the user with a weekly quiz on topics that were in the code suggestions the week prior.**  
 
 1. **AI Model** will log topics that are discussed throughout each week.  
