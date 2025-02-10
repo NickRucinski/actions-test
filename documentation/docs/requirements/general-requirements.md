@@ -7,6 +7,6 @@ sidebar_position: 3
 - An internet connection
 - An IDE with support for plugins
 
-** Code Maintenance and Documentation: **
+**Code Maintenance and Documentation:**
 - Git and Github for version control
 - Docusaurus for documentation
