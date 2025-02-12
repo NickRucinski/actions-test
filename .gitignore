@@ -11,3 +11,4 @@
 # WebServer
 .venv/
 .idea/
+__pycache__/
