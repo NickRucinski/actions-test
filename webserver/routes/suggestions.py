@@ -14,11 +14,11 @@ def generate_suggestion_route():
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
 
-    # TODO implement streaming
     try:
         response = requests.post(
             OLLAMA_URL,
-            json={"model": MODEL_NAME, "prompt": prompt, "stream": False}
+            json={"model": MODEL_NAME, "prompt": prompt, "stream": True},
+            stream=True,
         )
         response.raise_for_status()
         result = response.json()
