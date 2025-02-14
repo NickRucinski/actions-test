@@ -37,4 +37,5 @@ export function logSuggestionDecision(text: string, elapsedTime: number) {
             text: text,
         }),
     }).catch(err => console.error("Failed to log data:", err));
+    console.log("Elapsed time:", elapsedTime);
 }
