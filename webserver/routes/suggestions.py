@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response, stream_with_context
 import requests
+import json
 
 suggestions_bp = Blueprint('suggestions', __name__)
 
@@ -13,17 +14,23 @@ def generate_suggestion_route():
 
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
-
-    try:
+    
+    def generate_response():
         response = requests.post(
             OLLAMA_URL,
-            json={"model": MODEL_NAME, "prompt": prompt, "stream": True},
-            stream=True,
+            json={
+                "model": MODEL_NAME,
+                "prompt": prompt,
+                "stream": True
+            },
+            stream=True
         )
-        response.raise_for_status()
-        result = response.json()
 
-        return jsonify({"suggestions": [result["response"]]})
-    
-    except requests.exceptions.RequestException as e:
-        return jsonify({"error": str(e)}), 500
+        for line in response.iter_lines():
+            if line:
+                try:
+                    yield f"data: {line.decode('utf-8')}\n\n"
+                except json.JSONDecodeError as err:
+                    print(f"Error decoding JSON: {err}")
+
+    return Response(stream_with_context(generate_response()), content_type="text/event-stream")
