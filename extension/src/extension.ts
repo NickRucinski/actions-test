@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import { fetchSuggestions, logSuggestionDecision } from './api';
 
+let timeout: NodeJS.Timeout | undefined;
+let lastPrompt = "";
 let suggestionStartTime = new Map<string, number>();
 
 export function activate(context: vscode.ExtensionContext) {
@@ -16,7 +18,6 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    // Used for logging to see how long it takes to accept a suggestion
     context.subscriptions.push(
         vscode.workspace.onDidChangeTextDocument(handleTextChange)
     );
@@ -31,6 +32,16 @@ async function provideInlineCompletionItems(
     const prompt = document.getText(new vscode.Range(position.with(undefined, 0), position));
     const suggestions = await fetchSuggestions(prompt);
     return suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion));
+}
+
+function getPromptText(document: vscode.TextDocument, position: vscode.Position): string {
+    return document.getText(new vscode.Range(new vscode.Position(0, 0), position));
+}
+
+function shouldFetchSuggestion(prompt: string): boolean {
+    if (!/\s$/.test(prompt)) { return false; } // Fetch only after a space or punctuation
+    if (prompt === lastPrompt) { return false; } // Avoid redundant requests
+    return true;
 }
 
 function handleTextChange(event: vscode.TextDocumentChangeEvent) {

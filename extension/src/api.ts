@@ -1,4 +1,4 @@
-
+import * as vscode from "vscode";
 
 const AI_ENDPOINT: string = "https://ai.nickrucinski.com/generate";
 const LOG_ENDPOINT: string = "http://ai.nickrucinski.com/log";
@@ -25,6 +25,10 @@ export async function fetchSuggestions(prompt: string): Promise<string[]> {
         console.error("Error fetching AI suggestion", error);
     }
     return [];
+}
+
+function getSuggestionId(document: vscode.TextDocument, position: vscode.Position): string {
+    return `${document.uri.toString()}-${position.line}-${position.character}`;
 }
 
 export function logSuggestionDecision(text: string, elapsedTime: number) {
