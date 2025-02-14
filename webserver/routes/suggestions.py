@@ -14,8 +14,8 @@ def generate_suggestion_route():
 
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
-    
-    def generate_response():
+
+    try:
         response = requests.post(
             OLLAMA_URL,
             json={
@@ -23,14 +23,11 @@ def generate_suggestion_route():
                 "prompt": prompt,
                 "stream": True
             },
-            stream=True
         )
+        response.raise_for_status()
+        result = response.json()
 
-        for line in response.iter_lines():
-            if line:
-                try:
-                    yield f"data: {line.decode('utf-8')}\n\n"
-                except json.JSONDecodeError as err:
-                    print(f"Error decoding JSON: {err}")
-
-    return Response(stream_with_context(generate_response()), content_type="text/event-stream")
+        return jsonify({"suggestions": [result["response"]]})
+    
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
