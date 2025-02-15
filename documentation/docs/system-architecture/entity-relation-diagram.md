@@ -4,6 +4,8 @@ sidebar_position: 3
 
 # Entity Relation Diagram
 
+Testing
+
 This **database schema** represents an **AI-assisted code suggestion** and **user progress tracking system**. It consists of entities for **users**, **admins**, **AI models**, **code suggestions**, and **progress tracking**. 
 
 - The **AI-MODEL** generates **CODE-GENERATION** entries that lead to **CODE-SUGGESTION** records, which users interact with.
