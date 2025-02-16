@@ -102,5 +102,38 @@ sequenceDiagram
    System->>System: Logs mistake or correctness for admin review
 ```
 
+## Use Case 6: Tracking and Logging User Decisions
+```mermaid 
+sequenceDiagram
+   participant System
+   participant Database
+
+   System->>Database: Logs accepted/rejected suggestions
+   System->>Database: Tracks correctness
+   System->>Database: Records decision time
+   alt Frequent incorrect suggestions
+       System->>Database: Logs recurring mistakes for admin review
+   end
+   alt Multiple users with same mistakes
+       System->>Database: Flags concept as struggle area
+   end
+```
+
+## Use Case 7: Identifying Common Student Mistakes
+```mermaid
+sequenceDiagram
+    actor AI model
+    participant Database
+    participant System
+    participant Administrator
+
+    System->>Database: Records incorrect suggestions
+    System->>AI Model: Sends data for analysis
+    AI Model-->>System: Extracts concepts needing work
+    System->>Database: Stores flagged concept for the user
+    System-->>Administrator: Flags concepts for review
+```
+## Use Case 8: Identifying Common
+## Use Case 9: Generating Learning Reports for Administrators
 
 
