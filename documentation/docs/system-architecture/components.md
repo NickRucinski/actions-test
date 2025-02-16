@@ -25,7 +25,7 @@ The core of the system is a VS Code extension that provides code suggestions whi
 
 ## Backend Services
 
-### 🚀 **Flask (Python)**
+### 🌐 **Flask (Python)**
 
 The backend handles all API requests between the VS Code extension, AI model, and database.
 
