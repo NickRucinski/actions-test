@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Sequence Diagrams for Our Use Cases
 
-##Use Case 1: Recieving Context-Aware Code Suggestions
+## Use Case 1: Recieving Context-Aware Code Suggestions
 
 ```mermaid
     sequenceDiagram
@@ -23,7 +23,7 @@ sidebar_position: 2
     System -->> User: Displays explanation
     end
 ```
-##Use Case 2: Asking Inline Questions about Code
+## Use Case 2: Asking Inline Questions about Code
 
 ```mermaid
 sequenceDiagram
@@ -46,7 +46,7 @@ sequenceDiagram
 ```
 
 
-##Use Case 3: Asking Questions in the Copilot Chat 
+## Use Case 3: Asking Questions in the Copilot Chat 
 
 ```mermaid
 sequenceDiagram
@@ -68,7 +68,7 @@ sequenceDiagram
 ```
 
 
-##Use Case 4: Logging Decision Time for Code Suggestions
+## Use Case 4: Logging Decision Time for Code Suggestions
 
 ```mermaid
 sequenceDiagram
@@ -86,7 +86,7 @@ sequenceDiagram
 ```
 
 
-##Use Case 5: Recieving Feedback After Selecting a Suggestion
+## Use Case 5: Recieving Feedback After Selecting a Suggestion
 
 ```mermaid
 sequenceDiagram
