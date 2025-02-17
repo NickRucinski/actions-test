@@ -1,0 +1,28 @@
+import os
+from supabase import create_client, Client
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SUPABASE_URL: str = os.getenv('SUPABASE_URL')
+SUPABASE_KEY: str = os.getenv('SUPABASE_KEY')
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise ValueError("Missing SUPABASE_URL or SUPABASE_KEY. Check your .env file.")
+
+client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+def log_event(event):
+    log_data = {
+        "event": event.get("event"),
+        "text": event.get("text"),
+        "data": event.get("data")
+    }
+
+    response = client.table("Logs").insert(log_data).execute()
+
+    print(response)
+    # if response.error:
+    #     print(f"Error logging event: {response.error}")
+    # else:
+    #     print(f"LOGGED EVENT: {event}")
