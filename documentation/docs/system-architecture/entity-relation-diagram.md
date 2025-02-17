@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # Entity Relation Diagram
@@ -8,7 +8,7 @@ sidebar_position: 3
 
 **Figure 1.** ER Diagram & Design Schema of the Github Copilot Clone application.
 
-This **database schema** represents an **AI-assisted code suggestion** and **user progress tracking system**. It consists of entities for **users**, **admins**, **AI models**, **code suggestions**, and **progress tracking**. 
+This **database schema** represents an **AI-assisted code suggestion** and **user progress tracking system**. It consists of entities for **users**, **admins**, **AI models**, **code suggestions**, and **progress tracking**.
 
 - The **AI-MODEL** generates **CODE-GENERATION** entries that lead to **CODE-SUGGESTION** records, which users interact with.
 - Users respond to suggestions, marking them as correct or modifying them, and these interactions are recorded in **CODE-RESPONSE**.
