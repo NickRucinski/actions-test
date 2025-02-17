@@ -8,6 +8,13 @@
 .env.test.local
 .env.production.local
 
+# Extension
+out
+dist
+node_modules
+.vscode-test/
+*.vsix
+
 # WebServer
 .venv/
 .idea/
