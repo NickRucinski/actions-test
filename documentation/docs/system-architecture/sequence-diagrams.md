@@ -135,7 +135,6 @@ sequenceDiagram
 ```
 
 ### Use Case 8: Generating Learning Reports for Administrators
-
 ```mermaid
 sequenceDiagram
    participant User
@@ -148,12 +147,12 @@ sequenceDiagram
    AI Model->>AI Model: Calculates percentages of correct and incorrect responses
    alt User makes a correct selection
        AI Model->>AI Model: Tracks this data in a 'correct' category
-   else User makes an incorrect selection
+   else User makes an incorrect selection 
        AI Model->>AI Model: Tracks this data in an 'incorrect' category
    end
    AI Model->>AI Model: Puts user data into a formatted performance report table/page
    Administrator->>Administrator: Review the report
-
+   
 ```
 
 ### Use Case 9: Monitoring User's Progress
@@ -186,7 +185,6 @@ sequenceDiagram
    participant User
    participant AI Model
    participant Administrator
-
 
    AI Model->>AI Model: Logs topics that were discussed throughout the week
    AI Model->>AI Model: Analyze the users progress reports
