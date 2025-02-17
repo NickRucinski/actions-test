@@ -1,10 +1,10 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 
-# Sequence Diagrams for Our Use Cases
+# Sequence Diagrams
 
-## Use Case 1: Recieving Context-Aware Code Suggestions
+### Use Case 1: Receiving Context-Aware Code Suggestions
 
 ```mermaid
     sequenceDiagram
@@ -23,7 +23,8 @@ sidebar_position: 2
     System -->> User: Displays explanation
     end
 ```
-## Use Case 2: Asking Inline Questions about Code
+
+### Use Case 2: Asking Inline Questions about Code
 
 ```mermaid
 sequenceDiagram
@@ -45,8 +46,7 @@ sequenceDiagram
 
 ```
 
-
-## Use Case 3: Asking Questions in the Copilot Chat 
+### Use Case 3: Asking Questions in the Copilot Chat
 
 ```mermaid
 sequenceDiagram
@@ -67,8 +67,7 @@ sequenceDiagram
    System->>System: Logs question and clarification request
 ```
 
-
-## Use Case 4: Logging Decision Time for Code Suggestions
+### Use Case 4: Logging Decision Time for Code Suggestions
 
 ```mermaid
 sequenceDiagram
@@ -85,8 +84,7 @@ sequenceDiagram
    end
 ```
 
-
-## Use Case 5: Recieving Feedback After Selecting a Suggestion
+### Use Case 5: Receiving Feedback After Selecting a Suggestion
 
 ```mermaid
 sequenceDiagram
@@ -102,8 +100,9 @@ sequenceDiagram
    System->>System: Logs mistake or correctness for admin review
 ```
 
-## Use Case 6: Tracking and Logging User Decisions
-```mermaid 
+### Use Case 6: Tracking and Logging User Decisions
+
+```mermaid
 sequenceDiagram
    participant System
    participant Database
@@ -119,7 +118,8 @@ sequenceDiagram
    end
 ```
 
-## Use Case 7: Identifying Common Student Mistakes
+### Use Case 7: Identifying Common Student Mistakes
+
 ```mermaid
 sequenceDiagram
     actor AI model
@@ -133,7 +133,8 @@ sequenceDiagram
     System->>Database: Stores flagged concept for the user
     System-->>Administrator: Flags concepts for review
 ```
-## Use Case 8: Generating Learning Reports for Administrators
+
+### Use Case 8: Generating Learning Reports for Administrators
 ```mermaid
 sequenceDiagram
    participant User
@@ -151,9 +152,11 @@ sequenceDiagram
    end
    AI Model->>AI Model: Puts user data into a formatted performance report table/page
    Administrator->>Administrator: Review the report
-
+   
 ```
-## Use Case 9: Monitoring User's Progress
+
+### Use Case 9: Monitoring User's Progress
+
 ```mermaid
 sequenceDiagram
    participant Administrator
@@ -174,13 +177,14 @@ sequenceDiagram
    end
 
 ```
-## Use Case 10: AI Generated Quiz Based off of Previous Topics
+
+### Use Case 10: AI Generated Quiz Based off of Previous Topics
+
 ```mermaid
 sequenceDiagram
    participant User
    participant AI Model
    participant Administrator
-
 
    AI Model->>AI Model: Logs topics that were discussed throughout the week
    AI Model->>AI Model: Analyze the users progress reports
@@ -199,4 +203,3 @@ sequenceDiagram
    Administrator->>User: Distribute results
    User->>User: Review their grades and use AI suggestions to study
 ```
-
