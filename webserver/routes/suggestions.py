@@ -21,7 +21,7 @@ def generate_suggestion_route():
             json={
                 "model": MODEL_NAME,
                 "prompt": prompt,
-                "stream": True
+                "stream": False
             },
         )
         response.raise_for_status()
