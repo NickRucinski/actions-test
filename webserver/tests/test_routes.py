@@ -1,6 +1,12 @@
 import pytest
 
-from webserver import create_app
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + "/.."))
+from webserver.app import create_app
+import json
+
 
 @pytest.fixture
 def app():
@@ -24,11 +30,15 @@ def test_index_route(client):
     assert response.status_code == 200
 
 def test_logging_route(client):
-    response = client.post("/logging", data={
-        "event": "test_event",
-        "data": "test_data",
-        "text": "test_text",
-    })
+    response = client.post(
+        "/log",
+        data=json.dumps({
+            "event": "test_event",
+            "data": "test_data",
+            "text": "test_text",
+        }),
+        content_type="application/json"
+    )
     assert response.status_code == 200
 
 def test_suggestions_route_prompt(client):
