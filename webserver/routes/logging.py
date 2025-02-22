@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint
-from database import log_event, get_all_logs
+from database import log_event, get_all_logs, get_logs_by_user
 from flasgger import swag_from
 
 logging_bp = Blueprint('logging', __name__)
@@ -110,4 +110,55 @@ def get_logs_route():
         return jsonify(logs), 200
     except Exception as e:
         print(f"Error fetching logs: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+@logging_bp.route('/logs/<int:user_id>', methods=['GET'])
+@swag_from({
+    'tags': ['Logging'],
+    'summary': 'Retrieve logs by user ID',
+    'description': 'Fetches all logged events associated with a specific user ID.',
+    'parameters': [
+        {
+            'name': 'user_id',
+            'in': 'path',
+            'required': True,
+            'type': 'integer',
+            'description': 'The ID of the user whose logs are being retrieved.',
+            'example': 12345
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'List of logs for the specified user',
+            'schema': {
+                'type': 'array',
+                'items': {
+                    'type': 'object',
+                    'properties': {
+                        'id': {'type': 'integer', 'example': 1},
+                        'timestamp': {'type': 'number', 'example': 1708401940},
+                        'event': {'type': 'string', 'example': 'user_login'},
+                        'data': {'type': 'object', 'example': {'user_id': 12345}}
+                    }
+                }
+            }
+        },
+        '404': {
+            'description': 'No logs found for the specified user'
+        },
+        '500': {
+            'description': 'Internal server error'
+        }
+    }
+})
+def get_logs_by_user_route(user_id):
+    try:
+        logs = get_logs_by_user(user_id)
+
+        if not logs:
+            return jsonify({"status": "error", "message": "No logs found for this user"}), 404
+
+        return jsonify(logs), 200
+    except Exception as e:
+        print(f"Error fetching logs for user {user_id}: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500

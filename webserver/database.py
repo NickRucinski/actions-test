@@ -43,3 +43,17 @@ def get_all_logs():
     except Exception as e:
         print(f"Exception occurred while fetching logs: {e}")
         raise e
+    
+def get_logs_by_user(user_id):
+    try:
+        # This will not work right now. Need to decide if we want to store user id in schema or data
+        response = client.table("Logs").select("*").eq("data->>user_id", str(user_id)).execute()
+
+        if response.error:
+            raise Exception(f"Error fetching logs for user {user_id}: {response.error}")
+        
+        return response.data
+    
+    except Exception as e:
+        print(f"Exception occurred while fetching logs for user {user_id}: {e}")
+        raise e
