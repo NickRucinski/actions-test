@@ -30,3 +30,16 @@ def log_event(event):
     except Exception as e:
         print(f"Exception occurred while logging event: {e}")
         raise e
+    
+def get_all_logs():
+    try:
+        response = client.table("Logs").select("*").execute()
+        
+        if response.error:
+            raise Exception(f"Error fetching logs: {response.error}")
+        
+        return response.data
+    
+    except Exception as e:
+        print(f"Exception occurred while fetching logs: {e}")
+        raise e
