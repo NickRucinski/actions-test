@@ -7,7 +7,7 @@ users_bp = Blueprint('users', __name__)
 @users_bp.route('/users/<user_id>', methods=['GET'])
 @swag_from({
     'tags': ['Users'],
-    'summary': 'Get a specific user by ID',
+    'summary': 'TODO Get a specific user by ID',
     'description': 'Retrieves user details based on the provided user ID.',
     'parameters': [
         {
@@ -56,7 +56,7 @@ def get_user_route(user_id):
 @users_bp.route('/users', methods=['POST'])
 @swag_from({
     'tags': ['Users'],
-    'summary': 'Create a new user',
+    'summary': 'TODO Create a new user',
     'description': 'Registers a new user with first name, last name, email, and password.',
     'parameters': [
         {

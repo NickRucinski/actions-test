@@ -7,7 +7,7 @@ suggestions_bp = Blueprint('suggestions', __name__)
 OLLAMA_URL = "http://localhost:11434/api/generate"  
 MODEL_NAME = "llama3.2:latest" 
 
-@suggestions_bp.route('/generate', methods=['POST'])
+@suggestions_bp.route('/suggestion', methods=['POST'])
 @swag_from({
     'tags': ['Suggestions'],
     'summary': 'Generate a suggestion using the AI model',
