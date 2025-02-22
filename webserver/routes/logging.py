@@ -47,7 +47,14 @@ logging_bp = Blueprint('logging', __name__)
             }
         },
         '400': {
-            'description': 'Invalid input'
+            'description': 'Bad request or invalid input',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'status': {'type': 'string', 'example': 'error'},
+                    'message': {'type': 'string', 'example': 'Missing required fields: event, text'}
+                }
+            }
         },
         '500': {
             'description': 'Internal server error'
@@ -56,6 +63,12 @@ logging_bp = Blueprint('logging', __name__)
 })
 def log_event_route():
     data = request.json
+
+    required_fields = ['timestamp', 'event', 'data']
+    missing_fields = [field for field in required_fields if field not in data]
+
+    if missing_fields:
+        return jsonify({"status": "error", "message": f"Missing required fields: {', '.join(missing_fields)}"}), 400
 
     try:
         log_event(data)
