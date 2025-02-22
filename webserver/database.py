@@ -59,4 +59,17 @@ def get_logs_by_user(user_id):
         raise e
     
 def get_user_by_id(user_id):
-    response = client.table("Users").select("*").eq("id", user_id).execute()
+    try:
+        response = client.table("Users").select("*").eq("id", user_id).execute()
+
+        if response.error:
+            raise Exception(f"Error fetching user {user_id}: {response.error}")
+
+        if not response.data:
+            return None
+        
+        return response.data[0]
+    
+    except Exception as e:
+        print(f"Exception occurred while fetching user {user_id}: {e}")
+        raise e
