@@ -7,6 +7,9 @@ port = 8001
 ip_address = "0.0.0.0"
 
 app = Flask(__name__)
+app.config['SWAGGER'] = {
+    'title': 'Github Copilot Extension'
+}
 CORS(app)
 register_blueprints(app)
 swagger = Swagger(app)
