@@ -48,11 +48,18 @@ logging_bp = Blueprint('logging', __name__)
         },
         '400': {
             'description': 'Invalid input'
+        },
+        '500': {
+            'description': 'Internal server error'
         }
     }
 })
 def log_event_route():
     data = request.json
-    log_event(data)
-    print(f"LOGGED EVENT: {data}")  # Print to console for debugging
-    return jsonify({"status": "logged"}), 200
+
+    try:
+        log_event(data)
+        return jsonify({"status": "logged"}), 200
+    except Exception as e:
+        print(f"Error in logging event: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500

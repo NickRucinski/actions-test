@@ -19,9 +19,14 @@ def log_event(event):
         "data": event.get("data")
     }
 
-    response = client.table("Logs").insert(log_data).execute()
-    print(response)
-    # if response.error:
-    #     print(f"Error logging event: {response.error}")
-    # else:
-    #     print(f"LOGGED EVENT: {event}")
+    try:
+        response = client.table("Logs").insert(log_data).execute()
+
+        if response.error:
+            raise Exception(f"Error logging event: {response.error}")
+        else:
+            print(f"LOGGED EVENT: {event}")
+    
+    except Exception as e:
+        print(f"Exception occurred while logging event: {e}")
+        raise e
