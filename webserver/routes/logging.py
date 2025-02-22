@@ -115,7 +115,7 @@ def get_logs_route():
 @logging_bp.route('/logs/<int:user_id>', methods=['GET'])
 @swag_from({
     'tags': ['Logging'],
-    'summary': 'Retrieve logs by user ID',
+    'summary': 'TODO Retrieve logs by user ID',
     'description': 'Fetches all logged events associated with a specific user ID.',
     'parameters': [
         {
