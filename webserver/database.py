@@ -20,7 +20,6 @@ def log_event(event):
     }
 
     response = client.table("Logs").insert(log_data).execute()
-
     print(response)
     # if response.error:
     #     print(f"Error logging event: {response.error}")
