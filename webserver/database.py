@@ -57,3 +57,6 @@ def get_logs_by_user(user_id):
     except Exception as e:
         print(f"Exception occurred while fetching logs for user {user_id}: {e}")
         raise e
+    
+def get_user_by_id(user_id):
+    response = client.table("Users").select("*").eq("id", user_id).execute()
