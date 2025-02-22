@@ -71,6 +71,16 @@ def get_logs_by_user(user_id):
 def get_user_by_id(user_id):
     """
     Fetch a single user by ID.
+
+    Args:
+        user_id (str): The unique identifier of the user.
+
+    Returns:
+        dict: A dictionary containing user details if found.
+        None: If the user does not exist.
+
+    Raises:
+        Exception: If there is an error during the database query.
     """
     try:
         response = client.table("Users").select("*").eq("id", user_id).execute()
@@ -90,6 +100,20 @@ def get_user_by_id(user_id):
 def create_user(first_name, last_name, email, password):
     """
     Create a user in the database
+
+        Args:
+        first_name (str): The first name of the user.
+        last_name (str): The last name of the user.
+        email (str): The email address of the user.
+        password (str): The user's password (hashed before storage).
+
+    Returns:
+        tuple: A tuple containing:
+            - dict: The created user data (if successful).
+            - int: HTTP status code (201 for success, 400 for errors, 500 for server errors).
+
+    Raises:
+        Exception: If there is an issue with database insertion.
     """
     try:
         existing_user = client.table("Users").select("id").eq("email", email).execute()
