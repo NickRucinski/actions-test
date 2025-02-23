@@ -39,3 +39,8 @@ Mac(I think)
     python3 app.py
     deactivate
 ```
+
+# Tests
+
+From the webserver directory start the virtual environment and run `pytest test/`
+AI and database tests will fail if they are not running
