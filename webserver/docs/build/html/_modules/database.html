@@ -88,7 +88,16 @@
 <a class="viewcode-back" href="../index.html#database.log_event">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">log_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a logs and inserts it into the database</span>
+<span class="sd">    Logs an event by inserting it into the &#39;Logs&#39; table in the database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        event (dict): A dictionary containing event details. Expected keys are:</span>
+<span class="sd">            - &#39;event&#39;: The name of the event.</span>
+<span class="sd">            - &#39;text&#39;: A textual description of the event.</span>
+<span class="sd">            - &#39;data&#39;: Additional data associated with the event.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: If there is an error inserting the log into the database.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">log_data</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">),</span>
@@ -108,12 +117,19 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while logging event: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">e</span></div>
 
-    
+
+
 <div class="viewcode-block" id="get_all_logs">
 <a class="viewcode-back" href="../index.html#database.get_all_logs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_all_logs</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get all logs ever created</span>
+<span class="sd">    Retrieves all logs stored in the &#39;Logs&#39; table.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of dictionaries containing all logs.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: If there is an error fetching the logs from the database.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;Logs&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
@@ -127,12 +143,22 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while fetching logs: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">e</span></div>
 
-    
+
+
 <div class="viewcode-block" id="get_logs_by_user">
 <a class="viewcode-back" href="../index.html#database.get_logs_by_user">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_logs_by_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get all logs for a specific user</span>
+<span class="sd">    Retrieves all logs associated with a specific user.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_id (str): The ID of the user whose logs are to be fetched.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of dictionaries containing logs for the specified user.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: If there is an error fetching logs for the user.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># This will not work right now. Need to decide if we want to store user id in schema or data</span>
@@ -142,7 +168,7 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fetching logs for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span>
-    
+
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while fetching logs for user </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">e</span></div>

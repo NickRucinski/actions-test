@@ -141,6 +141,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_suggestion_route</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a suggestion based on the provided prompt.</span>
+<span class="sd">    See Swagger docs for more information.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
     <span class="n">prompt</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -154,7 +155,7 @@
             <span class="n">json</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">MODEL_NAME</span><span class="p">,</span>
                 <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span>
-                <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="kc">False</span>
             <span class="p">},</span>
         <span class="p">)</span>
         <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>

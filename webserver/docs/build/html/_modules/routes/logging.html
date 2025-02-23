@@ -81,7 +81,7 @@
 <span class="nd">@swag_from</span><span class="p">({</span>
     <span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Logging&#39;</span><span class="p">],</span>
     <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="s1">&#39;Log an event&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Receives an event and logs the event.&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Logs the event to the database.&#39;</span><span class="p">,</span>
     <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;body&#39;</span><span class="p">,</span>
@@ -135,6 +135,10 @@
     <span class="p">}</span>
 <span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">log_event_route</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Logs the event to the database.</span>
+<span class="sd">    See Swagger docs for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
 
     <span class="n">required_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">]</span>
@@ -181,6 +185,10 @@
     <span class="p">}</span>
 <span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_logs_route</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve all logs in the database</span>
+<span class="sd">    See Swagger docs for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">logs</span> <span class="o">=</span> <span class="n">get_all_logs</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">logs</span><span class="p">),</span> <span class="mi">200</span>
@@ -231,6 +239,10 @@
     <span class="p">}</span>
 <span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_logs_by_user_route</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get all logs for a specific user</span>
+<span class="sd">    See Swagger docs for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">logs</span> <span class="o">=</span> <span class="n">get_logs_by_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
 

@@ -15,7 +15,16 @@ client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def log_event(event):
     """
-    Creates a logs and inserts it into the database
+    Logs an event by inserting it into the 'Logs' table in the database.
+
+    Args:
+        event (dict): A dictionary containing event details. Expected keys are:
+            - 'event': The name of the event.
+            - 'text': A textual description of the event.
+            - 'data': Additional data associated with the event.
+
+    Raises:
+        Exception: If there is an error inserting the log into the database.
     """
     log_data = {
         "event": event.get("event"),
@@ -34,10 +43,17 @@ def log_event(event):
     except Exception as e:
         print(f"Exception occurred while logging event: {e}")
         raise e
-    
+
+
 def get_all_logs():
     """
-    Get all logs ever created
+    Retrieves all logs stored in the 'Logs' table.
+
+    Returns:
+        list: A list of dictionaries containing all logs.
+
+    Raises:
+        Exception: If there is an error fetching the logs from the database.
     """
     try:
         response = client.table("Logs").select("*").execute()
@@ -50,10 +66,20 @@ def get_all_logs():
     except Exception as e:
         print(f"Exception occurred while fetching logs: {e}")
         raise e
-    
+
+
 def get_logs_by_user(user_id):
     """
-    Get all logs for a specific user
+    Retrieves all logs associated with a specific user.
+
+    Args:
+        user_id (str): The ID of the user whose logs are to be fetched.
+
+    Returns:
+        list: A list of dictionaries containing logs for the specified user.
+
+    Raises:
+        Exception: If there is an error fetching logs for the user.
     """
     try:
         # This will not work right now. Need to decide if we want to store user id in schema or data
@@ -63,7 +89,7 @@ def get_logs_by_user(user_id):
             raise Exception(f"Error fetching logs for user {user_id}: {response.error}")
         
         return response.data
-    
+
     except Exception as e:
         print(f"Exception occurred while fetching logs for user {user_id}: {e}")
         raise e

@@ -68,6 +68,7 @@ MODEL_NAME = "llama3.2:latest"
 def generate_suggestion_route():
     """
     Generate a suggestion based on the provided prompt.
+    See Swagger docs for more information.
     """
     data = request.json
     prompt = data.get("prompt", "")
@@ -81,7 +82,7 @@ def generate_suggestion_route():
             json={
                 "model": MODEL_NAME,
                 "prompt": prompt,
-                "stream": True
+                "stream": False
             },
         )
         response.raise_for_status()

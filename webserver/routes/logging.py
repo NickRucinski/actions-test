@@ -8,7 +8,7 @@ logging_bp = Blueprint('logging', __name__)
 @swag_from({
     'tags': ['Logging'],
     'summary': 'Log an event',
-    'description': 'Receives an event and logs the event.',
+    'description': 'Logs the event to the database.',
     'parameters': [
         {
             'name': 'body',
@@ -62,6 +62,10 @@ logging_bp = Blueprint('logging', __name__)
     }
 })
 def log_event_route():
+    """
+    Logs the event to the database.
+    See Swagger docs for more information.
+    """
     data = request.json
 
     required_fields = ['timestamp', 'event', 'data']
@@ -105,6 +109,10 @@ def log_event_route():
     }
 })
 def get_logs_route():
+    """
+    Retrieve all logs in the database
+    See Swagger docs for more information.
+    """
     try:
         logs = get_all_logs()
         return jsonify(logs), 200
@@ -152,6 +160,10 @@ def get_logs_route():
     }
 })
 def get_logs_by_user_route(user_id):
+    """
+    Get all logs for a specific user
+    See Swagger docs for more information.
+    """
     try:
         logs = get_logs_by_user(user_id)
 
