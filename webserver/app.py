@@ -2,8 +2,6 @@ from flask import Flask
 from flask_cors import CORS
 from routes import register_blueprints
 from flasgger import Swagger
-import subprocess
-import os
 
 port = 8001
 ip_address = "0.0.0.0"
@@ -18,4 +16,3 @@ swagger = Swagger(app)
 
 if __name__ == '__main__':
     app.run(host=ip_address, port=port, debug=True)
-
