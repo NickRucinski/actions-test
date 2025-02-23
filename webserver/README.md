@@ -1,5 +1,12 @@
 # Requirements
 Make sure you have python3 installed
+Currently it is set to use Ollama's llama3.2'
+Download and follow the prompts here https://ollama.com/
+Download the .env file from Discord and place it in this directory, root/webserver/, on the same level as app.py.
+
+**Update**: This should not be required anymore. Use python to run
+the run.py script to have it build the docs and run the server. Testing still needs to be done for mac
+
 CD to the webserver folder
 Then to install all the requirements
 Windows
@@ -17,10 +24,6 @@ Mac(I think)
     pip install -r requirements.txt
     deactivate
 ```
-
-Also an AI model is needed
-Currently it is set to use Ollama's llama3.2'
-Download and follow the prompts here https://ollama.com/
 
 # Running the program
 windows
