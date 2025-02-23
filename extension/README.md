@@ -1,3 +1,5 @@
+npx typedoc src --entryPointStrategy expand --plugin typedoc-theme-hierarchy --theme hierarchy --readme none
+
 # testext README
 
 This is the README for your extension "testext". After writing up a brief description, we recommend including the following sections.
