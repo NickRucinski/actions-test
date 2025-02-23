@@ -1,0 +1,8 @@
+{
+    "entryPoints": ["src/extension.ts"],
+    "out": "../webserver/docs/build/html/tsdocs",
+    "tsconfig": "tsconfig.json",
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "includeVersion": true
+  }
