@@ -27,10 +27,6 @@ export async function fetchSuggestions(prompt: string): Promise<string[]> {
     return [];
 }
 
-function getSuggestionId(document: vscode.TextDocument, position: vscode.Position): string {
-    return `${document.uri.toString()}-${position.line}-${position.character}`;
-}
-
 export function logSuggestionDecision(text: string, elapsedTime: number) {
     fetch(LOG_ENDPOINT, {
         method: "POST",
