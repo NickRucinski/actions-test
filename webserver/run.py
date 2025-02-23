@@ -5,7 +5,7 @@ import venv
 
 venv_dir = '.venv'
 requirements_file = 'requirements.txt'
-docs_path = 'docs/source'
+docs_path = 'docs'
 
 def create_virtualenv():
     """Create a virtual environment if it doesn't exist."""
@@ -29,7 +29,7 @@ def build_docs():
         print(f"Building Sphinx docs in {docs_path}...")
         python_exe = os.path.join(venv_dir, 'Scripts', 'python.exe') if sys.platform == 'win32' else os.path.join(venv_dir, 'bin', 'python')
 
-        subprocess.run([python_exe, '-m', 'sphinx', 'build', '.', '_build/html'], cwd=docs_path, check=True)
+        subprocess.run([python_exe, '-m', 'sphinx', 'source', 'build'], cwd=docs_path, check=True)
     else:
         print(f"Docs folder not found at {docs_path}. Skipping docs build.")
 
