@@ -7,9 +7,10 @@ sidebar_position: 4
 ## Functional Requirements
 
 ### Logging
-- The system must track whether a code suggestion was accepted or rejected
-- The system must track the frequency that it is being used by a user
-- The system must track how long it takes for a user to accept or reject a suggestion
+- The system must be able to log clickstream data from the user
+  - Whether a code suggestion was accepted or rejected
+  - Frequency that code suggestions are given to a user
+  - How long it takes for a user to accept or reject a suggestion from its generation
 ### Code Suggestions
 - The system must provide context-aware code suggestions based on user code
 - The system must provide suggestions inline in the editor
