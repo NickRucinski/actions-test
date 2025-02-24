@@ -12,9 +12,9 @@ sidebar_position: 4
 - The system must track how long it takes for a user to accept or reject a suggestion
 ### Code Suggestions
 - The system must provide context-aware code suggestions based on user code
-- The system must show whether the code was correct or not
-- The system should be able to recognize boiler-plate code
 - The system must provide suggestions inline in the editor
+- The system must be able to generate correct and incorrect suggestions
+- The system must be able to tell the user when they accept an incorrect suggestion
 ### Interaction
 - The system allows users to write code
 - The system must allow the user to select if the code suggestion is correct or not
