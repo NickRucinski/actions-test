@@ -19,7 +19,7 @@ services:
     image: ollama/ollama:latest
     container_name: ollama
     ports:
-      - "5000:5000"
+      - "11434:11434"
     networks:
       - my_network
 

@@ -5,15 +5,16 @@ from flasgger import swag_from
 suggestions_bp = Blueprint('suggestions', __name__)
 
 OLLAMA_URL = "http://localhost:11434/api/generate"  
-MODEL_NAME = "llama3.2:latest"
+DEFAULT_MODEL_NAME = "llama3.2:latest"
 
 additional_prompt_text = ""
+generate_wrong_suggestion_text = ""
 
 @suggestions_bp.route('/suggestion', methods=['POST'])
 @swag_from({
     'tags': ['Suggestions'],
     'summary': 'Generate a suggestion using the AI model',
-    'description': 'Sends a prompt to the locally running Ollama model and returns the generated suggestion.',
+    'description': 'Sends a prompt to the locally running Ollama model with an optional model name and correctness flag, returning the generated suggestion.',
     'consumes': ['application/json'],
     'produces': ['application/json'],
     'parameters': [
@@ -27,6 +28,16 @@ additional_prompt_text = ""
                     'prompt': {
                         'type': 'string',
                         'example': 'def add(a, b):'
+                    },
+                    'model': {
+                        'type': 'string',
+                        'example': 'llama3.2:latest',
+                        'description': 'The AI model to use for generating the suggestion.'
+                    },
+                    'isCorrect': {
+                        'type': 'boolean',
+                        'example': False,
+                        'description': 'A flag indicating whether the suggestion should be correct.'
                     }
                 },
                 'required': ['prompt']
@@ -74,6 +85,8 @@ def generate_suggestion_route():
     """
     data = request.json
     prompt = data.get("prompt", "")
+    model_name = data.get("model", DEFAULT_MODEL_NAME)
+    is_correct = data.get("isCorrect", False)
 
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
@@ -82,7 +95,7 @@ def generate_suggestion_route():
         response = requests.post(
             OLLAMA_URL,
             json={
-                "model": MODEL_NAME,
+                "model": model_name,
                 "prompt": prompt,
                 "stream": False
             },
