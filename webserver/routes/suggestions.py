@@ -5,7 +5,9 @@ from flasgger import swag_from
 suggestions_bp = Blueprint('suggestions', __name__)
 
 OLLAMA_URL = "http://localhost:11434/api/generate"  
-MODEL_NAME = "llama3.2:latest" 
+MODEL_NAME = "llama3.2:latest"
+
+additional_prompt_text = ""
 
 @suggestions_bp.route('/suggestion', methods=['POST'])
 @swag_from({
