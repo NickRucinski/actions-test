@@ -16,7 +16,8 @@ sidebar_position: 4
 - The system should be able to recognize boiler-plate code
 - The system must provide suggestions inline in the editor
 ### Interaction
-- The system must allow the user to determine if the code suggestion is correct or not
+- The system allows users to write code
+- The system must allow the user to select if the code suggestion is correct or not
 ### Limitations
 - The system should provide a method of reinforcing that a user should not accept code too hastily
   - Locking a user out after 3 incorrect suggestions
