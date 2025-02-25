@@ -7,7 +7,7 @@ suggestions_bp = Blueprint('suggestions', __name__)
 OLLAMA_URL = "http://localhost:11434/api/generate"  
 DEFAULT_MODEL_NAME = "llama3.2:latest"
 
-additional_prompt_text = ""
+additional_prompt_text = "Complete the following code:"
 generate_wrong_suggestion_text = ""
 
 @suggestions_bp.route('/suggestion', methods=['POST'])
@@ -96,7 +96,7 @@ def generate_suggestion_route():
             OLLAMA_URL,
             json={
                 "model": model_name,
-                "prompt": prompt,
+                "prompt": additional_prompt_text + prompt,
                 "keep_alive": "1h",
                 "stream": False
             },
