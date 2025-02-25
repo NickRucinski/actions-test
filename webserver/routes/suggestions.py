@@ -97,6 +97,7 @@ def generate_suggestion_route():
             json={
                 "model": model_name,
                 "prompt": prompt,
+                "keep_alive": "1h",
                 "stream": False
             },
         )
