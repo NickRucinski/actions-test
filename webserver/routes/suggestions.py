@@ -4,8 +4,8 @@ from flasgger import swag_from
 
 suggestions_bp = Blueprint('suggestions', __name__)
 
-OLLAMA_URL = "http://localhost:11434/api/generate"  
-DEFAULT_MODEL_NAME = "llama3.2:latest"
+OLLAMA_URL = "http://ollama:11434/api/generate"  
+DEFAULT_MODEL_NAME = "codellama:latest"
 
 additional_prompt_text = "Complete the following code:"
 generate_wrong_suggestion_text = ""
@@ -103,7 +103,6 @@ def generate_suggestion_route():
         )
         response.raise_for_status()
         result = response.json()
-
         return jsonify({"suggestions": [result["response"]]})
     
     except requests.exceptions.RequestException as e:
