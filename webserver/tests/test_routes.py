@@ -35,7 +35,7 @@ def test_logging_route(client):
         data=json.dumps({
             "event": "test_event",
             "data": "test_data",
-            "text": "test_text",
+            "timestamp": "test_text",
         }),
         content_type="application/json"
     )
