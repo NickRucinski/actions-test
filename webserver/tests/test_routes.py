@@ -31,22 +31,29 @@ def test_index_route(client):
 
 def test_logging_route(client):
     response = client.post(
-        "/log",
+        "/logs",
         data=json.dumps({
             "event": "test_event",
             "data": "test_data",
-            "timestamp": "test_text",
+            "timestamp": 1708401940,
         }),
         content_type="application/json"
     )
     assert response.status_code == 200
+    assert response.json == {"status": "logged"}
 
 def test_suggestions_route_prompt(client):
-    response = client.post("/suggestions", data={
-        "prompt": "Hello",
-    })
+    response = client.post(
+        "/suggestion",
+        data=json.dumps({"prompt": "Hello"}),
+        content_type="application/json"
+    )
     assert response.status_code == 200
 
 def test_suggestions_route_no_prompt(client):
-    response = client.post("/suggestions")
+    response = client.post(
+        "/suggestion",
+        data=json.dumps({}),
+        content_type="application/json"
+    )
     assert response.status_code == 400
