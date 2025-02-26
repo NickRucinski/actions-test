@@ -76,18 +76,20 @@
 <span class="n">suggestions_bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;suggestions&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">OLLAMA_URL</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:11434/api/generate&quot;</span>  
-<span class="n">DEFAULT_MODEL_NAME</span> <span class="o">=</span> <span class="s2">&quot;codellama:latest&quot;</span>
+<span class="n">DEFAULT_MODEL_NAME</span> <span class="o">=</span> <span class="s2">&quot;copilot-style-codellama:latest&quot;</span>
 
 <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;&lt;Commands&gt;&quot;</span>
-    <span class="s2">&quot;Only respond with the code following the prompt&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Do not point out mistakes&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Provide comments only where necessary&quot;</span>
-    <span class="s2">&quot;&lt;/Commands&gt;&quot;</span>
+    <span class="s2">&quot;SYSTEM: Only respond with the code following the prompt.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SYSTEM: Do not point out mistakes.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SYSTEM: Respond in only plane text.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SYSTEM: Do not include text describing or explaining the code mistake at all&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SYSTEM: SYSTEM: Provide comments only where necessary.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SYSTEM: Do not provide additional information.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SYSTEM: If the prompt asks for an error, introduce a small syntax or logic mistake in the code. Do not explain or provide any extra context.&quot;</span>
 <span class="p">]</span>
 
 <span class="n">good_command</span> <span class="o">=</span> <span class="s2">&quot;&lt;Prompt&gt;Complete the following code:&quot;</span>
-<span class="n">bad_command</span> <span class="o">=</span> <span class="s2">&quot;&lt;Prompt&gt;Complete the following code but introduce a small syntax or logic mistake: &quot;</span>
+<span class="n">bad_command</span> <span class="o">=</span> <span class="s2">&quot;&lt;Prompt&gt;Complete the following code but introduce a small syntax or logic mistake:&quot;</span>
 
 <span class="n">end_prompt</span> <span class="o">=</span> <span class="s2">&quot;&lt;/Prompt&gt;&quot;</span>
 
@@ -176,7 +178,9 @@
 
     <span class="k">try</span><span class="p">:</span>
 
-        <span class="n">full_prompt</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span> <span class="o">+</span> <span class="n">good_command</span> <span class="o">+</span> <span class="n">prompt</span> <span class="o">+</span> <span class="n">end_prompt</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_correct</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span> <span class="o">+</span> <span class="n">bad_command</span> <span class="o">+</span> <span class="n">prompt</span> <span class="o">+</span> <span class="n">end_prompt</span><span class="p">)</span>
+        <span class="n">full_prompt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">good_command</span> <span class="k">if</span> <span class="n">is_correct</span> <span class="k">else</span> <span class="n">bad_command</span><span class="p">)</span> <span class="o">+</span> <span class="n">prompt</span> <span class="o">+</span> <span class="n">end_prompt</span>
+        <span class="p">)</span>
 
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="n">OLLAMA_URL</span><span class="p">,</span>
