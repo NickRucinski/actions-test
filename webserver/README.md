@@ -42,5 +42,5 @@ Mac(I think)
 
 # Tests
 
-From the webserver directory start the virtual environment and run `pytest test/`
+From the webserver directory start the virtual environment and run `pytest test/ -v`
 AI and database tests will fail if they are not running
