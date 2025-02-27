@@ -28,17 +28,17 @@ def log_event(event):
     """
     log_data = {
         "event": event.get("event"),
-        "text": event.get("text"),
+        "timestamp": event.get("timestamp"),
         "data": event.get("data")
     }
 
     try:
         response = client.table("Logs").insert(log_data).execute()
 
-        if response.error:
-            raise Exception(f"Error logging event: {response.error}")
-        else:
-            print(f"LOGGED EVENT: {event}")
+        # if response.error:
+        #     raise Exception(f"Error logging event: {response.error}")
+        # else:
+        print(f"LOGGED EVENT: {event}")
     
     except Exception as e:
         print(f"Exception occurred while logging event: {e}")
@@ -58,8 +58,8 @@ def get_all_logs():
     try:
         response = client.table("Logs").select("*").execute()
         
-        if response.error:
-            raise Exception(f"Error fetching logs: {response.error}")
+        # if response.error:
+        #     raise Exception(f"Error fetching logs: {response.error}")
         
         return response.data
     
@@ -85,8 +85,8 @@ def get_logs_by_user(user_id):
         # This will not work right now. Need to decide if we want to store user id in schema or data
         response = client.table("Logs").select("*").eq("data->>user_id", str(user_id)).execute()
 
-        if response.error:
-            raise Exception(f"Error fetching logs for user {user_id}: {response.error}")
+        # if response.error:
+        #     raise Exception(f"Error fetching logs for user {user_id}: {response.error}")
         
         return response.data
 
