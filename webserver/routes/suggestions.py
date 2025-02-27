@@ -5,10 +5,31 @@ from flasgger import swag_from
 suggestions_bp = Blueprint('suggestions', __name__)
 
 OLLAMA_URL = "http://localhost:11434/api/generate"  
-DEFAULT_MODEL_NAME = "codellama:latest"
+DEFAULT_MODEL_NAME = "copilot-style-codellama:latest"
 
-additional_prompt_text = "Complete the following code:"
-generate_wrong_suggestion_text = ""
+# system command to create a special AI model
+# {
+#     "name": "copilot-style-codellama",
+#     "from": "codellama",
+#     "system": "You are an AI assistant that provides code completions similar to GitHub Copilot. However, when specified you will need to respond with small errors that are left for the user to detect. Never point these errors out in any way. Your responses should be concise and continue the user's code seamlessly. Please follow all of the commands when giving completions. SYSTEM: Only respond with the code following the prompt, SYSTEM: Avoid pointing out mistakes, SYSTEM: Respond in only plane text, SYSTEM: Avoid including text describing or explaining the code mistake at all, SYSTEM: Provide comments only where necessary, SYSTEM: Avoid providing additional information, SYSTEM: If the prompt asks for an error, introduce a small syntax or logic mistake in the code. Do not explain or provide any extra context.",
+#     "parameters": {
+#         "temperature": 0.2,
+#         "top_k": 50
+#     }
+# }
+
+commands = [
+    "SYSTEM: Only respond with the code following the prompt.",
+    "SYSTEM: Avoid pointing out mistakes.",
+    "SYSTEM: Respond in only plane text.",
+    "SYSTEM: Avoid including text describing or explaining the code mistake at all",
+    "SYSTEM: Provide comments only where necessary.",
+    "SYSTEM: Avoid providing additional information.",
+    "SYSTEM: If the prompt asks for an error, introduce a small syntax or logic mistake in the code. Do not explain or provide any extra context."
+]
+
+good_command = "SYSTEM: Complete the following code:"
+bad_command = "SYSTEM: Complete the following code but introduce a small syntax or logic mistake:"
 
 @suggestions_bp.route('/suggestion', methods=['POST'])
 @swag_from({
@@ -86,17 +107,22 @@ def generate_suggestion_route():
     data = request.json
     prompt = data.get("prompt", "")
     model_name = data.get("model", DEFAULT_MODEL_NAME)
-    is_correct = data.get("isCorrect", False)
+    is_correct = data.get("isCorrect", True)
 
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
 
     try:
+
+        full_prompt = (
+            "".join(commands) + (good_command if is_correct else bad_command) + prompt
+        )
+
         response = requests.post(
             OLLAMA_URL,
             json={
                 "model": model_name,
-                "prompt": additional_prompt_text + prompt,
+                "prompt": full_prompt,
                 "keep_alive": "1h",
                 "stream": False
             },
