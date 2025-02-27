@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 /** Endpoint for creating new AI suggestions */
-const AI_ENDPOINT: string = "https://ai.nickrucinski.com/generate";
+const AI_ENDPOINT: string = "https://ai.nickrucinski.com/suggestion";
 
 /** Endpoint for logging information */
 const LOG_ENDPOINT: string = "http://ai.nickrucinski.com/log";
@@ -12,7 +12,7 @@ const LOG_ENDPOINT: string = "http://ai.nickrucinski.com/log";
  * @param {string} prompt - The input prompt to send to the AI model.
  * @returns {Promise<string[]>} A promise that resolves to an array of suggested strings.
  */
-export async function fetchSuggestions(prompt: string): Promise<string[]> {
+export async function fetchSuggestions(prompt: string): Promise<FetchResult<string[]>> {
     try {
         const response = await fetch(AI_ENDPOINT, {
             method: "POST",
@@ -26,14 +26,17 @@ export async function fetchSuggestions(prompt: string): Promise<string[]> {
             throw new Error("HTTP ERROR: " + response.statusText);
         }
 
-        const data = await response.json() as { suggestions: string[] };
-        if (data.suggestions && data.suggestions.length > 0) {
-            return data.suggestions;
+        const data = await response.json() as { suggestions?: string[]; error?: string };
+
+        if (data.suggestions && data.suggestions) {
+            return { status: response.status, success: true, data: data.suggestions };
         }
+
+        return { status: response.status, success: false, error: data.error || "Unknown error" };
     } catch (error) {
-        console.error("Error fetching AI suggestion", error);
+        // console.error("Error fetching AI suggestion", error);
+        return { status: 500, success: false, error: "Network error" };
     }
-    return [];
 }
 
 /**
@@ -54,3 +57,18 @@ export function logSuggestionDecision(text: string, elapsedTime: number) {
     }).catch(err => console.error("Failed to log data:", err));
     console.log("Elapsed time:", elapsedTime);
 }
+
+export interface FetchSuccess<T> {
+    status: number;
+    success: true;
+    data: T;
+}
+
+export interface FetchError {
+    status: number;
+    success: false;
+    error: string;
+}
+
+export type FetchResult<T> = FetchSuccess<T> | FetchError;
+
