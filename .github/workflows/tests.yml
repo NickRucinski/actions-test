@@ -4,12 +4,7 @@ name: Tests
 
 on:
   push:
-  branches:
-    - main
-    - develop
-  pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   test:
@@ -36,5 +31,5 @@ jobs:
           coverage html
       - name: Upload coverage report
         run: |
-          rm -rf documentation/static/
-          mv webserver/htmlcov documentation/static/
+          rm -rf documentation/static/htmlcov
+          mv webserver/htmlcov documentation/static/htmlcov

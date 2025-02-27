@@ -1,0 +1,57 @@
+# workflow for generating documentation
+
+name: Documentation
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  python-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          cd webserver
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Generate Python documentation
+        run: |
+          cd webserver/docs
+          make html
+      - name: Upload flaskdocs
+        run: |
+          rm -rf documentation/static/flaskdoc
+          mv webserver/docs/build/html documentation/static/flaskdoc
+      - name: Generate OpenAPI documentation
+        run: |
+          curl -L -o documentation/static/apispec_1.json https://ai.nickrucinski.com/apispec_1.json
+  
+  extension-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: '16'
+        - name: Install dependencies
+          run: |
+            cd extension
+            npm install
+        - name: Generate extension documentation
+          run: |
+            cd extension
+            npx typedoc src --entryPointStrategy expand --plugin typedoc-theme-hierarchy --theme hierarchy --readme none
+            mv webserver/docs/tsdoc documentation/static/tsdoc
