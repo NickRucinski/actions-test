@@ -21,10 +21,6 @@
         "title": "Run CopilotTest"
       },
       {
-        "command": "copilotClone.testCommand",
-        "title": "Run Test Command"
-      },
-      {
         "command": "copilotClone.signIn",
         "title": "Sign In for coPilotClone"
       }

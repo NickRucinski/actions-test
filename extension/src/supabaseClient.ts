@@ -1,7 +1,12 @@
 import * as vscode from 'vscode';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Function to get stored credentials and initialize Supabase
+/**
+ * Retrieves stored Supabase credentials from VS Code's secret storage and initializes a Supabase client.
+ *
+ * @param {vscode.ExtensionContext} context - The VS Code extension context.
+ * @returns {Promise<SupabaseClient | null>} The initialized Supabase client, or null if credentials are missing.
+ */
 export async function getSupabaseClient(context: vscode.ExtensionContext): Promise<SupabaseClient | null> {
     const secretStorage = context.secrets;
 

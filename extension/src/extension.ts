@@ -18,6 +18,7 @@ let suggestionStartTime = new Map<string, number>();
  * @param {vscode.ExtensionContext} context - The extension context provided by VS Code.
  */
 export async function activate(context: vscode.ExtensionContext) {
+    // Load environment variables from .env file
     const secretStorage = context.secrets;
 
     if (!(await secretStorage.get('SUPABASE_URL'))){
@@ -41,12 +42,6 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('copilotClone.signIn', () => signIn(context))
     );
     
-    let disposable = vscode.commands.registerCommand('copilotClone.testCommand', () => {
-        vscode.window.showInformationMessage('test bleh executed');
-    });
-
-    context.subscriptions.push(disposable);
-
     // Inline completion provider
     context.subscriptions.push(
         vscode.languages.registerInlineCompletionItemProvider(
@@ -62,6 +57,11 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 }
 
+/**
+ * Handles user sign-in, allowing them to select between email or GitHub authentication.
+ *
+ * @param {vscode.ExtensionContext} context - The VS Code extension context.
+ */
 async function signIn(context: vscode.ExtensionContext){
     const signInMethod = await vscode.window.showQuickPick(['Sign in with Email', 'Sign in with GitHub'], { placeHolder: 'Choose a sign-in method' });
 
@@ -72,7 +72,11 @@ async function signIn(context: vscode.ExtensionContext){
     }
 }
 
-
+/**
+ * Signs in or signs up a user using an email and password.
+ *
+ * @param {vscode.ExtensionContext} context - The VS Code extension context.
+ */
 //want to make it to sign up but need to look at database, this works for now 
 async function signInOrSignUpEmail(context: vscode.ExtensionContext){
     const supabase = await getSupabaseClient(context);
@@ -96,6 +100,12 @@ async function signInOrSignUpEmail(context: vscode.ExtensionContext){
     }
 }
 
+//needs adjusting 
+/**
+ * Signs in a user using GitHub OAuth authentication.
+ *
+ * @param {vscode.ExtensionContext} context - The VS Code extension context.
+ */
 async function signInWithGithub(context: vscode.ExtensionContext){  
     const supabase = await getSupabaseClient(context);
 try {
