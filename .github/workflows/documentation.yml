@@ -54,4 +54,5 @@ jobs:
           run: |
             cd extension
             npx typedoc src --entryPointStrategy expand --plugin typedoc-theme-hierarchy --theme hierarchy --readme none
-            mv ../webserver/docs/tsdoc documentation/static/tsdoc
+            cd ../
+            mv webserver/docs/tsdoc documentation/static/tsdoc
