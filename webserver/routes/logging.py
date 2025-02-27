@@ -4,7 +4,7 @@ from flasgger import swag_from
 
 logging_bp = Blueprint('logging', __name__)
 
-@logging_bp.route('/log', methods=['POST'])
+@logging_bp.route('/logs', methods=['POST'])
 @swag_from({
     'tags': ['Logging'],
     'summary': 'Log an event',
