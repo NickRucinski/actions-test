@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { Result } from "./types/result";
 
 /** Endpoint for creating new AI suggestions */
 const AI_ENDPOINT: string = "https://ai.nickrucinski.com/suggestion";
@@ -12,7 +13,7 @@ const LOG_ENDPOINT: string = "http://ai.nickrucinski.com/log";
  * @param {string} prompt - The input prompt to send to the AI model.
  * @returns {Promise<string[]>} A promise that resolves to an array of suggested strings.
  */
-export async function fetchSuggestions(prompt: string): Promise<FetchResult<string[]>> {
+export async function fetchSuggestions(prompt: string): Promise<Result<string[]>> {
     try {
         const response = await fetch(AI_ENDPOINT, {
             method: "POST",
@@ -23,7 +24,7 @@ export async function fetchSuggestions(prompt: string): Promise<FetchResult<stri
         });
 
         if (!response.ok) {
-            throw new Error("HTTP ERROR: " + response.statusText);
+            return { status: response.status, success: false, error: `Error: ${response.status} ${response.statusText}` };
         }
 
         const data = await response.json() as { suggestions?: string[]; error?: string };
@@ -33,9 +34,8 @@ export async function fetchSuggestions(prompt: string): Promise<FetchResult<stri
         }
 
         return { status: response.status, success: false, error: data.error || "Unknown error" };
-    } catch (error) {
-        // console.error("Error fetching AI suggestion", error);
-        return { status: 500, success: false, error: "Network error" };
+    } catch (error: any) {
+        return { status: 500, success: false, error: error.message || "Unknown error" };
     }
 }
 
@@ -57,18 +57,3 @@ export function logSuggestionDecision(text: string, elapsedTime: number) {
     }).catch(err => console.error("Failed to log data:", err));
     console.log("Elapsed time:", elapsedTime);
 }
-
-export interface FetchSuccess<T> {
-    status: number;
-    success: true;
-    data: T;
-}
-
-export interface FetchError {
-    status: number;
-    success: false;
-    error: string;
-}
-
-export type FetchResult<T> = FetchSuccess<T> | FetchError;
-

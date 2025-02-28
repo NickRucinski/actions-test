@@ -23,3 +23,12 @@ This extension contributes the following settings:
 
 * `myExtension.enable`: Enable/disable this extension.
 * `myExtension.thing`: Set to `blah` to do something.
+
+## Extension Testings
+
+To run the test:
+
+* `fetchSuggestion`: 
+```
+npx jest suggestion.test.ts
+```

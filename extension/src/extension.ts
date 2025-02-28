@@ -70,7 +70,6 @@ async function provideInlineCompletionItems(
     return suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion));
 }
 
-
 /**
  * Extracts the text from the beginning of the line to the current cursor position.
  *

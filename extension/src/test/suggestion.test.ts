@@ -20,11 +20,13 @@ describe("fetchSuggestions", () => {
       }
   });
 
-  it("should return error with status 500 when request is bad", async () => {
+  it("should return error with status 400 when request is bad", async () => {
       const result = await fetchSuggestions("");
 
+      console.log(result);
+
       expect(result.success).toBe(false);
-      expect(result.status).toBe(500);
+      expect(result.status).toBe(400);
       if (!result.success) {
           expect(result.error).toBeDefined();
       }
