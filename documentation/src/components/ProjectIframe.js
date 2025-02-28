@@ -6,9 +6,10 @@ function ProjectIframe({ docFolder }) {
 
   return (
     <>
-    <a href={iframeSrc} target='_blank'>Click me for Full Screen</a>    
+      <a href={iframeSrc} target='_blank'>Click me for Full Screen</a>    
     <iframe src={iframeSrc} width="100%" height="600px" title="Project Documentation" />
 </>
+
   );
 }
 

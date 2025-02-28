@@ -1,5 +1,5 @@
 import pytest
-
+from unittest.mock import patch, Mock
 import sys
 import os
 
@@ -42,13 +42,25 @@ def test_logging_route(client):
     assert response.status_code == 200
     assert response.json == {"status": "logged"}
 
-def test_suggestions_route_prompt(client):
+@pytest.fixture
+def mock_requests_post(mocker):
+    mock_response = {
+        "response": "Mocked response for: Hello"
+    }
+    
+    return mocker.patch("requests.post", return_value=Mock(status_code=200, json=lambda: mock_response))
+
+
+def test_suggestions_route_prompt(mock_requests_post, client):
     response = client.post(
         "/suggestion",
         data=json.dumps({"prompt": "Hello"}),
         content_type="application/json"
     )
+
     assert response.status_code == 200
+    assert response.json == {"suggestions": ["Mocked response for: Hello"]}
+
 
 def test_suggestions_route_no_prompt(client):
     response = client.post(
@@ -56,4 +68,6 @@ def test_suggestions_route_no_prompt(client):
         data=json.dumps({}),
         content_type="application/json"
     )
+
     assert response.status_code == 400
+    assert response.json == {"error": "No prompt provided"}
