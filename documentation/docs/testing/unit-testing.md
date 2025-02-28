@@ -22,9 +22,36 @@ Used for testing the Visual Studio Code extension
 
 ### Why it was chosen
 
-# Unit tests
-For each method, one or more test cases.
+## Visual Studio Code Testing Suite
+**Modules:**
+- test-cli"
+- test-electron
 
-A test case consists of input parameter values and expected results.
+# Running the unit tests
+## Flask API
+Commands to run
+```
+cd webserver
+# Windows
+py -m venv .venv
+.venv/Scripts/activate
+pip install -r requirements.txt
+pytest tests -v # -v for verbose output
+coverage run
+coverage html
+# Mac
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pytest tests -v # -v for verbose output
+coverage run
+coverage html
+```
+## Visual Studio Code Extension
+Commands to run
+```
+cd extension
+npm install
+npx jest [name of test file]
+```
 
-All external classes should be stubbed using mock objects.
