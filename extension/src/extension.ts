@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
         const userInput = await vscode.window.showInputBox({
             prompt: 'Enter text for suggestions',
         });
-        console.log("Test Fetch: " + userInput);
+        console.log("Test Fetch: \"" + userInput + "\"");
 
         if (userInput) {
             try {

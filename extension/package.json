@@ -21,17 +21,18 @@
           "copilot-clone.general.modelSelection": {
             "type": "string",
             "enum": [
-              "Nick's Website",
-              "ChatGPT",
+              "ollama",
+              "gpt-4o",
+              "gpt-4o-mini",
               "DeepSeek"
             ],
-            "default": "Nick's Website",
+            "default": "ollama",
             "description": "Select which LLM used for suggestions.",
             "group": "general"
           },
           "copilot-clone.model.temperature": {
             "type": "number",
-            "default": 0.5,
+            "default": 0.2,
             "minimum": 0,
             "maximum": 2,
             "description": "Temperature value the model will use.",
@@ -43,6 +44,22 @@
             "minimum": 0,
             "maximum": 100,
             "description": "Top K value the model will use.",
+            "group": "model"
+          },
+          "copilot-clone.model.topP": {
+            "type": "number",
+            "default": 1,
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Top P (Nucleus Sampling) value the model will use.",
+            "group": "model"
+          },
+          "copilot-clone.model.maxTokens": {
+            "type": "number",
+            "default": 256,
+            "minimum": 0,
+            "maximum": 1024,
+            "description": "Limit the maximum number of tokens allowed for a response.",
             "group": "model"
           },
           "copilot-clone.debug.AIEndpoint": {
