@@ -14,6 +14,46 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": [
+      {
+        "title": "Copilot Clone",
+        "properties": {
+          "copilot-clone.general.modelSelection": {
+            "type": "string",
+            "enum": [
+              "Nick's Website",
+              "ChatGPT",
+              "DeepSeek"
+            ],
+            "default": "Nick's Website",
+            "description": "Select which LLM used for suggestions.",
+            "group": "general"
+          },
+          "copilot-clone.model.temperature": {
+            "type": "number",
+            "default": 0.5,
+            "minimum": 0,
+            "maximum": 2,
+            "description": "Temperature value the model will use.",
+            "group": "model"
+          },
+          "copilot-clone.model.topK": {
+            "type": "number",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Top K value the model will use.",
+            "group": "model"
+          },
+          "copilot-clone.debug.AIEndpoint": {
+            "type": "string",
+            "default": "https://ai.nickrucinski.com/suggestion",
+            "description": "The endpoint the extension will fetch suggestions from.",
+            "group": "debug"
+          }
+        }
+      }
+    ],
     "commands": [
       {
         "command": "copilotClone.run",
