@@ -27,7 +27,8 @@ export function activate(context: vscode.ExtensionContext) {
 
         if (userInput) {
             try {
-                const result = await fetchSuggestions(userInput);
+                const endpoint = vscode.workspace.getConfiguration("copilot-clone").get<string>("debug.AIEndpoint");
+                const result = await fetchSuggestions(userInput, endpoint);
                 if (result.success) {
                     vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
                 } else {
