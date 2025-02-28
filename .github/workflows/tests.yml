@@ -1,0 +1,41 @@
+# workflow for running tests
+
+name: Tests
+
+on:
+  push:
+    branches: [ "main", "Github-Actions" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        run: |
+          cd webserver
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Create .env file
+        run: |
+          cd webserver
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
+          cat .env
+      - name: Run tests
+        run: |
+          cd webserver
+          pytest tests/ -v
+          coverage run -m pytest tests/ -v
+          coverage html
+      - name: Upload coverage report
+        run: |
+          rm -rf documentation/static/htmlcov
+          mv webserver/htmlcov documentation/static/htmlcov
