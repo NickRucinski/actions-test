@@ -18,6 +18,27 @@ let suggestionStartTime = new Map<string, number>();
 export function activate(context: vscode.ExtensionContext) {
     console.log("AI Extension Activated");
 
+    // Debug command to force a fetch using input from the user.
+    let disposable = vscode.commands.registerCommand('copilotClone.testFetch', async () => {
+        const userInput = await vscode.window.showInputBox({
+            prompt: 'Enter text for suggestions',
+        });
+        console.log("Test Fetch: " + userInput);
+
+        if (userInput) {
+            try {
+                const result = await fetchSuggestions(userInput);
+                if (result.success) {
+                    vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
+                } else {
+                    vscode.window.showErrorMessage(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage(`Error fetching suggestions: Unknown Error`);
+            }
+        }
+    });
+
     // Inline completion provider
     context.subscriptions.push(
         vscode.languages.registerInlineCompletionItemProvider(

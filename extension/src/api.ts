@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 import { Result } from "./types/result";
 
+/** Endpoint for creating new AI suggestions */
+const AI_ENDPOINT: string = "https://ai.nickrucinski.com/suggestion";
+
 /** Endpoint for logging information */
 const LOG_ENDPOINT: string = "http://ai.nickrucinski.com/log";
 
@@ -11,7 +14,7 @@ const LOG_ENDPOINT: string = "http://ai.nickrucinski.com/log";
  * @param {string} endpoint - The API endpoint to use for fetching the suggestion. Defaulted to Nick's Website.
  * @returns {Promise<string[]>} A promise that resolves to an array of suggested strings.
  */
-export async function fetchSuggestions(prompt: string, endpoint = "https://ai.nickrucinski.com/suggestion"): Promise<Result<string[]>> {
+export async function fetchSuggestions(prompt: string, endpoint = AI_ENDPOINT): Promise<Result<string[]>> {
     try {
         const response = await fetch(endpoint, {
             method: "POST",
