@@ -1,7 +1,15 @@
+import base64
+import hashlib
 import os
-from supabase import create_client, Client
+import secrets
+
 from dotenv import load_dotenv
 import bcrypt
+from supabase.client import Client, ClientOptions
+from werkzeug.local import LocalProxy
+
+from flask_storage import FlaskSessionStorage
+from flask import g, session
 
 load_dotenv()
 
@@ -11,7 +19,29 @@ SUPABASE_KEY: str = os.getenv('SUPABASE_KEY')
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError("Missing SUPABASE_URL or SUPABASE_KEY. Check your .env file.")
 
-client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+def get_supabase() -> Client:
+    if "supabase" not in g:
+        g.supabase = Client(
+            SUPABASE_URL,
+            SUPABASE_KEY,
+            options=ClientOptions(
+                storage=FlaskSessionStorage(),
+                flow_type="pkce"
+            ),
+        )
+        return g.supabase
+
+client: Client = LocalProxy(get_supabase)
+
+def generate_code_verifier():
+   """Generate a secure random code verifier (43-128 characters)."""
+   return secrets.token_urlsafe(64)  # Secure random 64-character string
+
+def generate_code_challenge(verifier):
+   """Create a SHA256 challenge from the code verifier (RFC 7636)."""
+   sha256_hash = hashlib.sha256(verifier.encode()).digest()
+   challenge = base64.urlsafe_b64encode(sha256_hash).decode().rstrip("=")  # Remove '=' padding
+   return challenge
 
 def log_event(event):
     """
@@ -33,7 +63,7 @@ def log_event(event):
     }
 
     try:
-        response = client.table("Logs").insert(log_data).execute()
+        response = client.table("logs").insert(log_data).execute()
 
         # if response.error:
         #     raise Exception(f"Error logging event: {response.error}")
@@ -163,3 +193,24 @@ def create_user(first_name, last_name, email, password):
     except Exception as e:
         print(f"Exception while creating user: {e}")
         return {"error": "Internal server error"}, 500
+
+
+def login(request):
+    session.clear()  # Ensure we start fresh each time
+    res = client.auth.sign_in_with_oauth(
+        {
+            "provider": "github",
+            "options": {
+                "redirect_to": "https://ai.nickrucinski.com/auth/callback"
+            },
+        }
+    )
+    return res
+
+def callback(code):
+    try:
+        # Supabase automatically retrieves and verifies the code_verifier from the session
+        res = client.auth.exchange_code_for_session({"auth_code": code})
+        print("Authentication successful:", res)
+    except Exception as e:
+        return f"Authentication failed: {str(e)}", 500
