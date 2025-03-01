@@ -50,20 +50,15 @@ def log_event(event):
     Args:
         event (dict): A dictionary containing event details. Expected keys are:
             - 'event': The name of the event.
-            - 'text': A textual description of the event.
-            - 'data': Additional data associated with the event.
+            - 'time_lapse': A textual description of the event.
+            - 'metadata': Additional data associated with the event.
 
     Raises:
         Exception: If there is an error inserting the log into the database.
     """
-    log_data = {
-        "event": event.get("event"),
-        "timestamp": event.get("timestamp"),
-        "data": event.get("data")
-    }
 
     try:
-        response = client.table("logs").insert(log_data).execute()
+        response = client.table("logs").insert(event).execute()
 
         # if response.error:
         #     raise Exception(f"Error logging event: {response.error}")
@@ -86,7 +81,7 @@ def get_all_logs():
         Exception: If there is an error fetching the logs from the database.
     """
     try:
-        response = client.table("Logs").select("*").execute()
+        response = client.table("logs").select("*").execute()
         
         # if response.error:
         #     raise Exception(f"Error fetching logs: {response.error}")
@@ -113,7 +108,7 @@ def get_logs_by_user(user_id):
     """
     try:
         # This will not work right now. Need to decide if we want to store user id in schema or data
-        response = client.table("Logs").select("*").eq("data->>user_id", str(user_id)).execute()
+        response = client.table("logs").select("*").eq("data->>user_id", str(user_id)).execute()
 
         # if response.error:
         #     raise Exception(f"Error fetching logs for user {user_id}: {response.error}")
@@ -139,7 +134,7 @@ def get_user_by_id(user_id):
         Exception: If there is an error during the database query.
     """
     try:
-        response = client.table("Users").select("*").eq("id", user_id).execute()
+        response = client.table("users").select("*").eq("id", user_id).execute()
 
         if response.error:
             raise Exception(f"Error fetching user {user_id}: {response.error}")
@@ -172,13 +167,13 @@ def create_user(first_name, last_name, email, password):
         Exception: If there is an issue with database insertion.
     """
     try:
-        existing_user = client.table("Users").select("id").eq("email", email).execute()
+        existing_user = client.table("users").select("id").eq("email", email).execute()
         if existing_user.data:
             return {"error": "Email already exists"}, 400
         
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-        response = client.table("Users").insert({
+        response = client.table("users").insert({
             "first_name": first_name,
             "last_name": last_name,
             "email": email,
