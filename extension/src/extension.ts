@@ -36,6 +36,33 @@ export async function activate(context: vscode.ExtensionContext) {
 
     console.log("AI Extension Activated");
 
+    // Debug command to force a fetch using input from the user.
+    let disposable = vscode.commands.registerCommand('copilotClone.testFetch', async () => {
+        const userInput = await vscode.window.showInputBox({
+            prompt: 'Enter prompt for suggestion.',
+        });
+        console.log("Test Fetch: \"" + userInput + "\"");
+
+        if (userInput) {
+            try {
+                const endpoint = vscode.workspace.getConfiguration("copilot-clone").get<string>("debug.AIEndpoint");
+                const model = vscode.workspace.getConfiguration("copilot-clone").get<string>("general.modelSelection");
+                const temperature = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.temperature");
+                const top_k = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.topK");
+                const top_p = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.topP");
+                const max_tokens = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.maxTokens");
+                const result = await fetchSuggestions(userInput, endpoint, model, temperature, top_k, top_p, max_tokens);
+                if (result.success) {
+                    vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
+                } else {
+                    vscode.window.showErrorMessage(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage(`Error fetching suggestions: Unknown Error`);
+            }
+        }
+    });
+
 
     // Sign in with email command 
     context.subscriptions.push(

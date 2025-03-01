@@ -11,16 +11,22 @@ const LOG_ENDPOINT: string = "http://ai.nickrucinski.com/log";
  * Fetches AI-generated suggestions based on the given prompt.
  *
  * @param {string} prompt - The input prompt to send to the AI model.
+ * @param {string} endpoint - The API endpoint to use for fetching the suggestion. Defaulted to Nick's Website.
+ * @param {string} model - The LLM to be usded for generating suggestions.
+ * @param {string} temperature - The temperature value to use for generating the response. Defaulted to 0.2.
+ * @param {string} topK - The Top K value to use for generating the response. Defaulted to 0.
+ * @param {string} topP - The Top P value to use for generating the response. Defaulted to 0.
+ * @param {string} maxTokens - The max number of tokens allowed for response length.
  * @returns {Promise<string[]>} A promise that resolves to an array of suggested strings.
  */
-export async function fetchSuggestions(prompt: string): Promise<Result<string[]>> {
+export async function fetchSuggestions(prompt: string, endpoint = AI_ENDPOINT, model = "ollama", temperature = 0.2, topK = 0, topP = 1, maxTokens = 256): Promise<Result<string[]>> {
     try {
-        const response = await fetch(AI_ENDPOINT, {
+        const response = await fetch(endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ prompt })
+            body: JSON.stringify({ prompt, model, temperature, "top_k": topK, "top_p": topP, "max_tokens": maxTokens })
         });
 
         if (!response.ok) {
