@@ -1,4 +1,3 @@
-version: '3.8'
 # This does not work yet. Just testing stuff out
 services:
   flask:
@@ -19,9 +18,16 @@ services:
     image: ollama/ollama:latest
     container_name: ollama
     ports:
-      - "5000:5000"
+      - "11434:11434"
     networks:
       - my_network
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama serve & 
+        sleep 5
+        ollama run codellama
+        wait
 
 networks:
   my_network:

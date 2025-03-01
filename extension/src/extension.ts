@@ -160,16 +160,18 @@ async function provideInlineCompletionItems(
 
     lastPrompt = prompt;
 
-    const suggestions = await fetchSuggestions(prompt);
+    const result = await fetchSuggestions(prompt);
+    let suggestions: string[] = [];
 
-    if (suggestions.length > 0) {
+    if (result.success && result.data) {
         const suggestionId = `${document.uri.toString()}-${position.line}-${position.character}`;
         suggestionStartTime.set(suggestionId, Date.now());
+
+        suggestions = result.data;
     }
 
     return suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion));
 }
-
 
 /**
  * Extracts the text from the beginning of the line to the current cursor position.

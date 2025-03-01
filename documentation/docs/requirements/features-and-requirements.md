@@ -7,30 +7,34 @@ sidebar_position: 4
 ## Functional Requirements
 
 ### Logging
-- The system must track whether a code suggestion was accepted or rejected
-- The system must track the frequency that it is being used by a user
-- The system must track how long it takes for a user to accept or reject a suggestion
+The system must log user interactions to gather insights on how suggestions are used. Logged data includes:
+ - Whether a code suggestion was accepted or rejected
+ - How often code suggestions are given to a user
+ - How long it takes for a user to accept or reject a suggestion from its generation
 ### Code Suggestions
-- The system must provide context-aware code suggestions based on user code
-- The system must show whether the code was correct or not
-- The system should be able to recognize boiler-plate code
-- The system must provide suggestions inline in the editor
-### Interaction
-- The system must allow the user to determine if the code suggestion is correct or not
-### Limitations
-- The system should provide a method of reinforcing that a user should not accept code too hastily
-  - Locking a user out after 3 incorrect suggestions
+- The system must provide **context-aware** code suggestions based on user code
+- The system must provide suggestions **inline** in the editor
+- The system must be able to **generate correct and incorrect** suggestions
+- The system must notify users when they accept an incorrect suggestion.
+### User Interaction
+- The system allows users to write code as usual within the IDE.
+- The system must allow users to manually **mark** a suggestion as correct or incorrect.
+### Limitations & Safeguards
+The system should encourage **thoughtful code acceptance** by implementing safeguards:
+- Users may be temporarily locked out from suggestions after **three incorrect acceptances**.
+- A warning message should appear before locking a user out.
+- A cooldown period should be implemented before resuming suggestions.
 
 ## Nonfunctional Requirements
 ### Performance
-- The system's performance for providing suggestions should be with 5 seconds of the normal Copilot experience
-### Statistics
-- The system should provide a portal to easily access statistics
-### Education
-- The system should be able to identify common programming mistakes to be used in creating incorrect suggestions
+- The system must generate code suggestions **within 5 seconds**, comparable to GitHub Copilot.
+### Statistics & Insights
+- A **portal/dashboard** should allow users and administrators to access logged statistics, including:
+  - User acceptance/rejection rates.
+  - Average response time to suggestions.
+### Education & Learning
 - The system should promote critical reflection in programmers who are still learning
 ### User Experience
-- The system should not get in the way of the user's coding experience too greatly
+- The system should integrate **seamlessly** into the coding workflow without unnecessary interruptions.
 ### Maintainability
-- The system should have a codebase that is easy to maintain and add features to
-- The system should have a well documented codebase
+- The codebase should be **modular and well-documented** to allow easy feature additions and maintenance.
