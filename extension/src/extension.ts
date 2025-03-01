@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { fetchSuggestions, logSuggestionDecision } from './api';
+import { getSupabaseClient } from './supabaseClient';
+import * as dotenv from 'dotenv';
 
 /** Timeout handler for debouncing text changes */
 let timeout: NodeJS.Timeout | undefined;
@@ -15,7 +17,23 @@ let suggestionStartTime = new Map<string, number>();
  *
  * @param {vscode.ExtensionContext} context - The extension context provided by VS Code.
  */
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+    // Load environment variables from .env file
+    const secretStorage = context.secrets;
+
+    if (!(await secretStorage.get('SUPABASE_URL'))){
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+        if (supabaseUrl && supabaseAnonKey) {
+            await secretStorage.store('SUPABASE_URL', supabaseUrl);
+            await secretStorage.store('SUPABASE_ANON_KEY', supabaseAnonKey);
+        } else {
+            vscode.window.showErrorMessage('Supabase environment variables are not set.');
+        }
+    }
+
+
     console.log("AI Extension Activated");
 
     // Debug command to force a fetch using input from the user.
@@ -45,6 +63,12 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
+
+    // Sign in with email command 
+    context.subscriptions.push(
+        vscode.commands.registerCommand('copilotClone.signIn', () => signIn(context))
+    );
+    
     // Inline completion provider
     context.subscriptions.push(
         vscode.languages.registerInlineCompletionItemProvider(
@@ -59,6 +83,85 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.workspace.onDidChangeTextDocument(handleTextChange)
     );
 }
+
+/**
+ * Handles user sign-in, allowing them to select between email or GitHub authentication.
+ *
+ * @param {vscode.ExtensionContext} context - The VS Code extension context.
+ */
+async function signIn(context: vscode.ExtensionContext){
+    const signInMethod = await vscode.window.showQuickPick(['Sign in with Email', 'Sign in with GitHub'], { placeHolder: 'Choose a sign-in method' });
+
+    if (signInMethod === 'Sign in with Email') {
+        signInOrSignUpEmail(context);
+    } else if (signInMethod === 'Sign in with GitHub') {
+        signInWithGithub(context);
+    }
+}
+
+/**
+ * Signs in or signs up a user using an email and password.
+ *
+ * @param {vscode.ExtensionContext} context - The VS Code extension context.
+ */
+//want to make it to sign up but need to look at database, this works for now 
+async function signInOrSignUpEmail(context: vscode.ExtensionContext){
+    const supabase = await getSupabaseClient(context);
+    const email = await vscode.window.showInputBox({ prompt: 'Enter your email', placeHolder: "sample@gmail.com" });
+
+    if (!email) {return;}
+
+    const password = await vscode.window.showInputBox({ prompt: 'Enter your password', placeHolder: "password", password: true });
+    if (!password) {return;}
+
+    if (!supabase) {
+        vscode.window.showErrorMessage('Supabase client initialization failed.');
+        return;
+    }
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+        vscode.window.showErrorMessage(`Sign-in failed: ${error.message}`);
+    } 
+    else {
+            vscode.window.showInformationMessage(`Sign-in successful!YAYYYY `);
+    }
+}
+
+//needs adjusting 
+/**
+ * Signs in a user using GitHub OAuth authentication.
+ *
+ * @param {vscode.ExtensionContext} context - The VS Code extension context.
+ */
+async function signInWithGithub(context: vscode.ExtensionContext){  
+    const supabase = await getSupabaseClient(context);
+try {
+    // Redirect to GitHub for authentication
+        vscode.window.showInformationMessage("Redirecting to GitHub for authentication...");
+        if (!supabase) {
+            vscode.window.showErrorMessage('Supabase client initialization failed.');
+            return;
+        }
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'github',
+    });
+
+    if (error) {
+        vscode.window.showErrorMessage(`GitHub sign-in failed: ${error.message}`);
+    } 
+    if (data?.url) {
+        await vscode.env.openExternal(vscode.Uri.parse(data.url));
+    }
+    else{
+        vscode.window.showErrorMessage(`Failed to get OAuth URL.`);
+    }
+}
+catch (error: any) {
+    vscode.window.showErrorMessage(`Unexpected Error: ${error.message}`);
+}
+}
+
+
 
 /**
  * Provides inline completion items based on AI-generated suggestions.
