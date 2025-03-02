@@ -43,21 +43,6 @@ The AI-generated response is displayed.
 User requests for clarification are handled.
 The system logs user engagement.
 
-### 3. Chat-Based Programming Questions
-Objective: Ensure users can ask general coding questions in the chat interface.
-
-#### Test Steps:
-- Simulate a user opening the chat and asking a programming question.
-- Mock the AI model’s response.
-- Verify that the system displays the answer.
-- Simulate user requesting further clarification.
-- Validate that the system logs the interaction.
-
-#### Expected Result:
-The chat response is accurate and relevant.
-User clarification requests are handled correctly.
-The system logs user interactions.
-
 ### 4. Decision Time Logging for Code Suggestions
 Objective: Ensure the system correctly tracks how long a user takes to accept or reject a suggestion.
 
@@ -100,19 +85,6 @@ Objective: Ensure all user decisions regarding code suggestions are recorded.
 #### Expected Result:
 The system accurately tracks user decisions and logs errors.
 Recurring mistakes are flagged for instructor review.
-
-### 7. Identifying Common Student Mistakes
-Objective: Ensure the system recognizes and logs frequent user mistakes.
-
-#### Test Steps:
-- Simulate multiple incorrect user responses to similar suggestions.
-- Verify that the system logs repeated mistakes.
-- Mock AI-generated suggestions adapting to common mistakes.
-- Validate that new suggestions are based on learning trends.
-
-#### Expected Result:
-The system adapts based on common errors.
-The AI model generates improved learning-based suggestions.
 
 ### 8. Generating Learning Reports for Administrators
 Objective: Ensure the system compiles user data into meaningful reports.
