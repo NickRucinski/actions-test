@@ -127,7 +127,7 @@ def generate_suggestion_route():
             return jsonify({"error": str(e)}), 500
         
     # Ollama detected
-    elif (model_name == "ollama"):
+    else:
         try:
 
             full_prompt = (

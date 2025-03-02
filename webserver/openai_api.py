@@ -6,7 +6,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 OPENAI_API_KEY: str = os.getenv('OPENAI_API_KEY')
-client = OpenAI(api_key=OPENAI_API_KEY)
+
+if OPENAI_API_KEY:
+    client = OpenAI(api_key=OPENAI_API_KEY)
+else:
+    client = None
+    print("Warning: OPENAI_API_KEY is not set. API requests will not work.")
 
 def getSuggestion(prompt, system_messages=[], model="gpt-4o-mini", temperature=0.2, top_p=1, max_tokens = 256):
     """
