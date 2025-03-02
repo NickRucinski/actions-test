@@ -75,7 +75,7 @@
     "commands": [
       {
         "command": "copilotClone.testFetch",
-        "title": "Debug: Test Fetch Suggestions"
+        "title": "Debug: Test Fetch Suggestions",
         "command": "copilotClone.run",
         "title": "Run CopilotTest"
       },

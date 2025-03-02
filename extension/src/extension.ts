@@ -2,15 +2,19 @@ import * as vscode from 'vscode';
 import { fetchSuggestions, logSuggestionDecision } from './api';
 import { getSupabaseClient } from './supabaseClient';
 import * as dotenv from 'dotenv';
-
-/** Timeout handler for debouncing text changes */
-let timeout: NodeJS.Timeout | undefined;
+import { LogData, LogEvent } from './types/event';
 
 /** Stores the last used prompt to prevent redundant requests */
 let lastPrompt = "";
 
 /** Maps a unique suggestion ID to its timestamp for tracking elapsed time */
 let suggestionStartTime = new Map<string, number>();
+let lastSuggestion = "";
+
+/** Timeout handler for debouncing text changes */
+let debounceTimer: NodeJS.Timeout | null = null;
+const TYPING_PAUSE_THRESHOLD = 500;
+let lastRequest: { document: vscode.TextDocument; position: vscode.Position; context: vscode.InlineCompletionContext; token: vscode.CancellationToken } | null = null;
 
 /**
  * Activates the VS Code extension.
@@ -33,7 +37,6 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     }
 
-
     console.log("AI Extension Activated");
 
     // Debug command to force a fetch using input from the user.
@@ -51,7 +54,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 const top_k = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.topK");
                 const top_p = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.topP");
                 const max_tokens = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.maxTokens");
-                const result = await fetchSuggestions(userInput, endpoint, model, temperature, top_k, top_p, max_tokens);
+                const result = await fetchSuggestions(userInput, model, temperature, top_k, top_p, max_tokens);
                 if (result.success) {
                     vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
                 } else {
@@ -62,7 +65,6 @@ export async function activate(context: vscode.ExtensionContext) {
             }
         }
     });
-
 
     // Sign in with email command 
     context.subscriptions.push(
@@ -123,7 +125,7 @@ async function signInOrSignUpEmail(context: vscode.ExtensionContext){
         vscode.window.showErrorMessage(`Sign-in failed: ${error.message}`);
     } 
     else {
-            vscode.window.showInformationMessage(`Sign-in successful!YAYYYY `);
+        vscode.window.showInformationMessage(`Sign-in successful!YAYYYY `);
     }
 }
 
@@ -135,33 +137,31 @@ async function signInOrSignUpEmail(context: vscode.ExtensionContext){
  */
 async function signInWithGithub(context: vscode.ExtensionContext){  
     const supabase = await getSupabaseClient(context);
-try {
-    // Redirect to GitHub for authentication
-        vscode.window.showInformationMessage("Redirecting to GitHub for authentication...");
-        if (!supabase) {
-            vscode.window.showErrorMessage('Supabase client initialization failed.');
-            return;
+    try {
+        // Redirect to GitHub for authentication
+            vscode.window.showInformationMessage("Redirecting to GitHub for authentication...");
+            if (!supabase) {
+                vscode.window.showErrorMessage('Supabase client initialization failed.');
+                return;
+            }
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'github',
+        });
+
+        if (error) {
+            vscode.window.showErrorMessage(`GitHub sign-in failed: ${error.message}`);
+        } 
+        if (data?.url) {
+            await vscode.env.openExternal(vscode.Uri.parse(data.url));
         }
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'github',
-    });
-
-    if (error) {
-        vscode.window.showErrorMessage(`GitHub sign-in failed: ${error.message}`);
-    } 
-    if (data?.url) {
-        await vscode.env.openExternal(vscode.Uri.parse(data.url));
+        else{
+            vscode.window.showErrorMessage(`Failed to get OAuth URL.`);
+        }
     }
-    else{
-        vscode.window.showErrorMessage(`Failed to get OAuth URL.`);
+    catch (error: any) {
+        vscode.window.showErrorMessage(`Unexpected Error: ${error.message}`);
     }
 }
-catch (error: any) {
-    vscode.window.showErrorMessage(`Unexpected Error: ${error.message}`);
-}
-}
-
-
 
 /**
  * Provides inline completion items based on AI-generated suggestions.
@@ -179,25 +179,43 @@ async function provideInlineCompletionItems(
     context: vscode.InlineCompletionContext,
     token: vscode.CancellationToken
 ): Promise<vscode.InlineCompletionList | vscode.InlineCompletionItem[]> {
-    const prompt = getPromptText(document, position);
+    // Debounce the function
+    return new Promise((resolve) => {
+        if (debounceTimer) {
+            clearTimeout(debounceTimer); // Clear the previous timer
+        }
 
-    if (!shouldFetchSuggestion(prompt)) {
-        return [];
-    }
+        // Store the latest request
+        lastRequest = { document, position, context, token };
 
-    lastPrompt = prompt;
+        // Set a new timer
+        debounceTimer = setTimeout(async () => {
+            if (lastRequest) {
+                const { document, position, context, token } = lastRequest;
+                const prompt = getPromptText(document, position);
 
-    const result = await fetchSuggestions(prompt);
-    let suggestions: string[] = [];
+                if (!shouldFetchSuggestion(prompt)) {
+                    resolve([]); // Resolve with an empty array if no suggestion should be fetched
+                    return;
+                }
 
-    if (result.success && result.data) {
-        const suggestionId = `${document.uri.toString()}-${position.line}-${position.character}`;
-        suggestionStartTime.set(suggestionId, Date.now());
+                lastPrompt = prompt;
 
-        suggestions = result.data;
-    }
+                const result = await fetchSuggestions(prompt);
+                let suggestions: string[] = [];
 
-    return suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion));
+                if (result.success && result.data) {
+                    const suggestionId = `${document.uri.toString()}-${position.line}-${position.character}`;
+                    suggestionStartTime.set(suggestionId, Date.now());
+
+                    suggestions = result.data;
+                    lastSuggestion = suggestions[0];
+                }
+
+                resolve(suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion)));
+            }
+        }, TYPING_PAUSE_THRESHOLD); // Debounce delay of 300ms
+    });
 }
 
 /**
@@ -223,7 +241,6 @@ function shouldFetchSuggestion(prompt: string): boolean {
     return true;
 }
 
-
 /**
  * Handles text document changes and logs whether an AI suggestion was accepted or rejected.
  *
@@ -232,17 +249,29 @@ function shouldFetchSuggestion(prompt: string): boolean {
 function handleTextChange(event: vscode.TextDocumentChangeEvent) {
     event.contentChanges.forEach(change => {
         const suggestionId = `${event.document.uri.toString()}-${change.range.start.line}-${change.range.start.character}`;
+        const isDeletion = change.text === "" && !change.range.isEmpty;
 
-        if (suggestionStartTime.has(suggestionId)) {
-            const startTime = suggestionStartTime.get(suggestionId) || 0;
-            const elapsedTime = Date.now() - startTime;
-            
-            console.log(`Suggestion accepted/rejected after ${elapsedTime}ms`);
-
-            logSuggestionDecision(change.text, elapsedTime);
-
-            suggestionStartTime.delete(suggestionId);
+        if (!suggestionStartTime.has(suggestionId) || isDeletion) {
+            return; // Ignore changes that aren't tied to a suggestion
         }
+
+        const startTime = suggestionStartTime.get(suggestionId) || 0;
+        const elapsedTime = Date.now() - startTime;
+        
+        const isAccepted = change.text == lastSuggestion;
+        const logEventType = isAccepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
+
+        const logData: LogData = {
+            event: logEventType,
+            time_lapse: elapsedTime,
+            metadata: { userId: "12345", suggestionId, hasBug: false }
+        }
+
+        logSuggestionDecision(logData);
+
+        suggestionStartTime.delete(suggestionId);
+
+        console.log(`Suggestion time ${suggestionStartTime}`);
     });
 }
 
