@@ -107,7 +107,7 @@ def generate_suggestion_route():
     """
     data = request.json
     prompt = data.get("prompt", "")
-    model_name = data.get("model", DEFAULT_MODEL_NAME)
+    model_name = data.get("model", "ollama")
     temperature = data.get("temperature", 0.2)
     top_p = data.get("top_p", 1)
     top_k = data.get("top_k", 0)
@@ -117,7 +117,7 @@ def generate_suggestion_route():
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
     
-    # ChatGPT model detected, use OpenAI function.
+    # ChatGPT model detected.
     if ("gpt" in model_name):
         try:
             response = openai.getSuggestion(prompt, commands, model=model_name, temperature=temperature, top_p=top_p, max_tokens=max_tokens)
@@ -127,9 +127,13 @@ def generate_suggestion_route():
             return jsonify({"error": str(e)}), 500
         
     # Ollama detected
-    elif (model_name == "ollama"):
+    else:
         try:
 
+            # If the request is meant for ollama, but without a specific model, it uses default model.
+            if model_name == "ollama":
+                model_name = DEFAULT_MODEL_NAME
+                
             full_prompt = (
                 "".join(commands) + (good_command if is_correct else bad_command) + prompt
             )

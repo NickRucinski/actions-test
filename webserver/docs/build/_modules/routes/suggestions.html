@@ -180,7 +180,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
     <span class="n">prompt</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">model_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">DEFAULT_MODEL_NAME</span><span class="p">)</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;ollama&quot;</span><span class="p">)</span>
     <span class="n">temperature</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;temperature&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
     <span class="n">top_p</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;top_p&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">top_k</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;top_k&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -190,7 +190,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">prompt</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;No prompt provided&quot;</span><span class="p">}),</span> <span class="mi">400</span>
     
-    <span class="c1"># ChatGPT model detected, use OpenAI function.</span>
+    <span class="c1"># ChatGPT model detected.</span>
     <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;gpt&quot;</span> <span class="ow">in</span> <span class="n">model_name</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">getSuggestion</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">commands</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span> <span class="n">top_p</span><span class="o">=</span><span class="n">top_p</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="n">max_tokens</span><span class="p">)</span>
@@ -200,9 +200,13 @@
             <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}),</span> <span class="mi">500</span>
         
     <span class="c1"># Ollama detected</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">model_name</span> <span class="o">==</span> <span class="s2">&quot;ollama&quot;</span><span class="p">):</span>
+    <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
 
+            <span class="c1"># If the request is meant for ollama, but without a specific model, it uses default value.</span>
+            <span class="k">if</span> <span class="n">model_name</span> <span class="o">==</span> <span class="s2">&quot;ollama&quot;</span><span class="p">:</span>
+                <span class="n">model_name</span> <span class="o">=</span> <span class="n">DEFAULT_MODEL_NAME</span>
+                
             <span class="n">full_prompt</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">good_command</span> <span class="k">if</span> <span class="n">is_correct</span> <span class="k">else</span> <span class="n">bad_command</span><span class="p">)</span> <span class="o">+</span> <span class="n">prompt</span>
             <span class="p">)</span>
