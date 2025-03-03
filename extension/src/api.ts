@@ -50,10 +50,10 @@ export async function fetchSuggestions(prompt: string, model = "ollama", tempera
  *
  * @param {LogData} logData - The suggestion text that was acted upon.
  */
-export function logSuggestionDecision(logData: LogData): void {
+export function trackEvent(logData: LogData): void {
     const body = JSON.stringify(logData);
 
-    console.log("Logging suggestion decision...", body);
+    console.log("Logging event...", body);
 
     fetch(LOG_ENDPOINT, {
         method: "POST",

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { fetchSuggestions, logSuggestionDecision } from './api';
+import { fetchSuggestions, trackEvent } from './api';
 import { checkAndStoreSupabaseSecrets, getSupabaseClient } from './supabaseClient';
 import * as dotenv from 'dotenv';
 import { LogData, LogEvent } from './types/event';
@@ -96,29 +96,53 @@ async function signIn(context: vscode.ExtensionContext){
  * @param {vscode.ExtensionContext} context - The VS Code extension context.
  */
 //want to make it to sign up but need to look at database, this works for now 
-async function signInOrSignUpEmail(context: vscode.ExtensionContext){
+async function signInOrSignUpEmail(context: vscode.ExtensionContext) {
     const supabase = await getSupabaseClient(context);
-    const email = await vscode.window.showInputBox({ prompt: 'Enter your email', placeHolder: "sample@gmail.com" });
-
-    if (!email) {return;}
-
-    const password = await vscode.window.showInputBox({ prompt: 'Enter your password', placeHolder: "password", password: true });
-    if (!password) {return;}
-
     if (!supabase) {
         vscode.window.showErrorMessage('Supabase client initialization failed.');
         return;
     }
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    // Ask user to choose sign in or sign up
+    const action = await vscode.window.showQuickPick(["Sign In", "Sign Up"], { 
+        placeHolder: "Do you want to sign in or sign up?" 
+    });
+
+    if (!action) return;
+
+    const email = await vscode.window.showInputBox({ prompt: 'Enter your email', placeHolder: "sample@gmail.com" });
+    if (!email) return;
+
+    const password = await vscode.window.showInputBox({ prompt: 'Enter your password', placeHolder: "password", password: true });
+    if (!password) return;
+
+    let response;
+    let logEventType = action === "Sign In" ? LogEvent.USER_LOGIN : LogEvent.USER_SIGNUP;
+
+    if (action === "Sign In") {
+        response = await supabase.auth.signInWithPassword({ email, password });
+    } else {
+        response = await supabase.auth.signUp({ email, password });
+    }
+
+    const { data, error } = response;
+
     if (error) {
-        vscode.window.showErrorMessage(`Sign-in failed: ${error.message}`);
-    } 
-    else {
-        vscode.window.showInformationMessage(`Sign-in successful!YAYYYY `);
+        vscode.window.showErrorMessage(`${action} failed: ${error.message}`);
+    } else {
+        vscode.window.showInformationMessage(`${action} successful! 🎉`);
+
+        const logData: LogData = {
+            event: logEventType,
+            time_lapse: 0,
+            metadata: { userId: data.user?.id, email: data.user?.email }
+        };
+
+        trackEvent(logData);
     }
 }
 
-//needs adjusting 
+// needs OAuth URL to sign in with GitHub and log the event
 /**
  * Signs in a user using GitHub OAuth authentication.
  *
@@ -143,9 +167,23 @@ async function signInWithGithub(context: vscode.ExtensionContext){
         if (data?.url) {
             await vscode.env.openExternal(vscode.Uri.parse(data.url));
         }
-        else{
-            vscode.window.showErrorMessage(`Failed to get OAuth URL.`);
+        
+        const { data: sessionData } = await supabase.auth.getSession();
+
+        if (sessionData?.session) {
+            const user = sessionData.session.user;
+            const logData: LogData = {
+                event: LogEvent.USER_AUTH_GITHUB,
+                time_lapse: 0,
+                metadata: { userId: user.id, email: user.email }
+            };
+    
+            trackEvent(logData);
+
+            vscode.window.showInformationMessage(`GitHub sign-in successful! 🎉`);
         }
+            
+        vscode.window.showErrorMessage(`Failed to get OAuth URL.`);
     }
     catch (error: any) {
         vscode.window.showErrorMessage(`Unexpected Error: ${error.message}`);
@@ -270,7 +308,7 @@ function handleTextChange(event: vscode.TextDocumentChangeEvent) {
             metadata: { userId: "12345", suggestionId, hasBug: false }
         };
 
-        logSuggestionDecision(logData);
+        trackEvent(logData);
         
         suggestionStartTime.delete(suggestionId);
         lastSuggestion = "";
