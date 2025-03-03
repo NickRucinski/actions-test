@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { Result } from "./types/result";
-import { LogData } from "./types/event";
+import { LogData, LogEvent } from "./types/event";
 
 /** Endpoint for creating new AI suggestions */
 const AI_ENDPOINT: string = "https://ai.nickrucinski.com/suggestion";
@@ -20,6 +20,8 @@ const LOG_ENDPOINT: string = "https://ai.nickrucinski.com/logs";
  * @returns {Promise<string[]>} A promise that resolves to an array of suggested strings.
  */
 export async function fetchSuggestions(prompt: string, model = "ollama", temperature = 0.2, top_k = 0, top_p = 1, maxTokens = 256): Promise<Result<string[]>> {
+    const startTime = Date.now();
+    
     try {
         const response = await fetch(AI_ENDPOINT, {
             method: "POST",
@@ -29,6 +31,9 @@ export async function fetchSuggestions(prompt: string, model = "ollama", tempera
             body: JSON.stringify({ prompt })
         });
 
+        const endTime = Date.now(); 
+        const elapsedTime = endTime - startTime;
+
         if (!response.ok) {
             return { status: response.status, success: false, error: `Error: ${response.status} ${response.statusText}` };
         }
@@ -36,6 +41,14 @@ export async function fetchSuggestions(prompt: string, model = "ollama", tempera
         const data = await response.json() as { suggestions?: string[]; error?: string };
 
         if (data.suggestions && data.suggestions) {
+            const logData: LogData = {
+                event: LogEvent.MODEL_GENERATE,
+                time_lapse: elapsedTime,
+                metadata: { prompt: prompt, suggestions: data.suggestions }
+            };
+    
+            trackEvent(logData);
+
             return { status: response.status, success: true, data: data.suggestions };
         }
 

@@ -13,7 +13,7 @@ let lastSuggestion = "";
 
 /** Timeout handler for debouncing text changes */
 let debounceTimer: NodeJS.Timeout | null = null;
-const TYPING_PAUSE_THRESHOLD = 500;
+const TYPING_PAUSE_THRESHOLD = 2000;
 let lastRequest: { document: vscode.TextDocument; position: vscode.Position; context: vscode.InlineCompletionContext; token: vscode.CancellationToken } | null = null;
 
 /**
