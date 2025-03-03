@@ -68,7 +68,7 @@ def log_event_route():
     """
     data = request.json
 
-    required_fields = ['timestamp', 'event', 'data']
+    required_fields = ['time_lapse', 'event']
     missing_fields = [field for field in required_fields if field not in data]
 
     if missing_fields:

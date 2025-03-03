@@ -26,14 +26,9 @@ def log_event(event):
     Raises:
         Exception: If there is an error inserting the log into the database.
     """
-    log_data = {
-        "event": event.get("event"),
-        "timestamp": event.get("timestamp"),
-        "data": event.get("data")
-    }
 
     try:
-        response = client.table("Logs").insert(log_data).execute()
+        response = client.table("logs").insert(event).execute()
 
         # if response.error:
         #     raise Exception(f"Error logging event: {response.error}")

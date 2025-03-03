@@ -34,8 +34,10 @@ def test_logging_route(client):
         "/logs",
         data=json.dumps({
             "event": "test_event",
-            "data": "test_data",
-            "timestamp": 1708401940,
+            "metadata": {
+                "userID": 12345
+            },
+            "time_lapse": 1708
         }),
         content_type="application/json"
     )
