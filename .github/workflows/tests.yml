@@ -37,5 +37,4 @@ jobs:
           coverage html
       - name: Upload coverage report
         run: |
-          rm -rf documentation/static/htmlcov
           mv webserver/htmlcov documentation/static/
