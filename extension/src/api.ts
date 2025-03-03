@@ -48,7 +48,7 @@ export async function fetchSuggestions(prompt: string, model = "ollama", tempera
 /**
  * Logs the user's decision on an AI-generated suggestion.
  *
- * @param {logData} LogData - The suggestion text that was acted upon.
+ * @param {LogData} logData - The suggestion text that was acted upon.
  */
 export function logSuggestionDecision(logData: LogData): void {
     const body = JSON.stringify(logData);

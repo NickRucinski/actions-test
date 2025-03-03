@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { fetchSuggestions, logSuggestionDecision } from './api';
-import { getSupabaseClient } from './supabaseClient';
+import { checkAndStoreSupabaseSecrets, getSupabaseClient } from './supabaseClient';
 import * as dotenv from 'dotenv';
 import { LogData, LogEvent } from './types/event';
 
@@ -24,18 +24,7 @@ let lastRequest: { document: vscode.TextDocument; position: vscode.Position; con
 export async function activate(context: vscode.ExtensionContext) {
     // Load environment variables from .env file
     const secretStorage = context.secrets;
-
-    if (!(await secretStorage.get('SUPABASE_URL'))){
-        const supabaseUrl = process.env.SUPABASE_URL;
-        const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-
-        if (supabaseUrl && supabaseAnonKey) {
-            await secretStorage.store('SUPABASE_URL', supabaseUrl);
-            await secretStorage.store('SUPABASE_ANON_KEY', supabaseAnonKey);
-        } else {
-            vscode.window.showErrorMessage('Supabase environment variables are not set.');
-        }
-    }
+    checkAndStoreSupabaseSecrets(secretStorage);
 
     console.log("AI Extension Activated");
 
@@ -205,14 +194,20 @@ async function provideInlineCompletionItems(
                 let suggestions: string[] = [];
 
                 if (result.success && result.data) {
+                    suggestions = result.data;
+                    lastSuggestion = suggestions[0];
+
+                    // Create InlineCompletionItems
+                    const completionItems = suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion));
+
+                    // Set suggestionStartTime when the suggestion is returned
                     const suggestionId = `${document.uri.toString()}-${position.line}-${position.character}`;
                     suggestionStartTime.set(suggestionId, Date.now());
 
-                    suggestions = result.data;
-                    lastSuggestion = suggestions[0];
+                    resolve(completionItems);
+                } else {
+                    resolve([]); // Resolve with an empty array if no suggestions are available
                 }
-
-                resolve(suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion)));
             }
         }, TYPING_PAUSE_THRESHOLD); // Debounce delay of 300ms
     });
@@ -257,21 +252,28 @@ function handleTextChange(event: vscode.TextDocumentChangeEvent) {
 
         const startTime = suggestionStartTime.get(suggestionId) || 0;
         const elapsedTime = Date.now() - startTime;
-        
-        const isAccepted = change.text == lastSuggestion;
-        const logEventType = isAccepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
 
+        console.log(`Suggestion ID: ${suggestionId}`);
+        console.log(`Last suggestion: ${lastSuggestion}`);
+        
+        if (!lastSuggestion || lastSuggestion.trim() === "") {
+            console.log("No active suggestion, ignoring.");
+            return;
+        }
+
+        const isFullyAccepted = change.text === lastSuggestion;
+
+        const logEventType = isFullyAccepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
         const logData: LogData = {
             event: logEventType,
             time_lapse: elapsedTime,
             metadata: { userId: "12345", suggestionId, hasBug: false }
-        }
+        };
 
         logSuggestionDecision(logData);
-
+        
         suggestionStartTime.delete(suggestionId);
-
-        console.log(`Suggestion time ${suggestionStartTime}`);
+        lastSuggestion = "";
     });
 }
 
