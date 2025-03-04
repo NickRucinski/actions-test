@@ -299,7 +299,8 @@ function handleTextChange(event: vscode.TextDocumentChangeEvent) {
             return;
         }
 
-        const isFullyAccepted = change.text === lastSuggestion;
+        const normalize = (str: string) => str.replace(/\r\n/g, "\n").trim();
+        const isFullyAccepted = normalize(change.text) === normalize(lastSuggestion);
 
         const logEventType = isFullyAccepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
         const logData: LogData = {
