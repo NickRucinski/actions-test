@@ -37,4 +37,10 @@ jobs:
           coverage html
       - name: Upload coverage report
         run: |
+          rm -rf documentation/static/htmlcov
           mv webserver/htmlcov documentation/static/
+      - name: Upload Test Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage
+          path: documentation/static/
