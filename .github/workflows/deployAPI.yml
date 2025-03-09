@@ -14,7 +14,7 @@ jobs:
 
             - name: Stop Flask Server
               run: |
-                fuser -k 8001/tcp || true
+                sudo systemctl stop flask-app.service || true
 
             - name: Build and Deploy
               run: |
@@ -22,7 +22,6 @@ jobs:
                 source .venv/bin/activate
                 pip install -r requirements.txt
   
-            - name: Start Flask in tmux Session
+            - name: Start Flask service
               run: |
-                tmux new-session -d -s flask_server 'bash -c "cd ~/Projects/project-copilot-clone-2/webserver && source .venv/bin/activate && sleep 5 && python app.py > flask.log 2>&1"'
-                tmux ls || echo "No tmux sessions found"
+                sudo systemctl start flask-app.service
