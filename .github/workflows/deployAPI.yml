@@ -12,6 +12,10 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
+            - name: Stop Flask Server
+              run: |
+                fuser -k 8001/tcp || true
+
             - name: Build and Deploy
               run: |
                 cd ~/Projects/project-copilot-clone-2/webserver
