@@ -24,5 +24,5 @@ jobs:
   
             - name: Start Flask in tmux Session
               run: |
-                tmux new-session -d -s flask_server 'bash -c "cd ~/Projects/project-copilot-clone-2/webserver && source .venv/bin/activate && python app.py > flask.log 2>&1"'
+                tmux new-session -d -s flask_server 'bash -c "cd ~/Projects/project-copilot-clone-2/webserver && source .venv/bin/activate && sleep 5 && python app.py > flask.log 2>&1"'
                 tmux ls || echo "No tmux sessions found"
