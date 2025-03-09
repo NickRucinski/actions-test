@@ -1,0 +1,19 @@
+name: Deploy to Self-Hosted Server
+
+on:
+    push:
+        branches: ["dev", "Github-Actions"]
+
+jobs:
+    deploy:
+        runs-on: self-hosted
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Build and Deploy
+              run: |
+                cd ~/Projects/project-copilot-clone-2/webserver
+                pip install -r requirements.txt
+                python app.py
