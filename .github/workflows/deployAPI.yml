@@ -15,5 +15,6 @@ jobs:
             - name: Build and Deploy
               run: |
                 cd ~/Projects/project-copilot-clone-2/webserver
+                source .venv/bin/activate
                 pip install -r requirements.txt
                 python app.py
