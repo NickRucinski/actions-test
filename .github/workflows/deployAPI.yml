@@ -21,4 +21,7 @@ jobs:
                 cd ~/Projects/project-copilot-clone-2/webserver
                 source .venv/bin/activate
                 pip install -r requirements.txt
-                python app.py
+  
+            - name: Start Flask in tmux Session
+              run: |
+                tmux new-session -d -s flask_server 'bash -c "cd ~/Projects/project-copilot-clone-2/webserver && source .venv/bin/activate && python app.py"'
