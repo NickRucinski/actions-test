@@ -15,20 +15,20 @@ const LOG_ENDPOINT: string = "https://ai.nickrucinski.com/logs";
  * @param {string} model - The LLM to be usded for generating suggestions.
  * @param {string} temperature - The temperature value to use for generating the response. Defaulted to 0.2.
  * @param {string} top_k - The Top K value to use for generating the response. Defaulted to 0.
- * @param {string} top_k - The Top P value to use for generating the response. Defaulted to 0.
- * @param {string} maxTokens - The max number of tokens allowed for response length.
+ * @param {string} top_p - The Top P value to use for generating the response. Defaulted to 0.
+ * @param {string} max_tokens - The max number of tokens allowed for response length.
  * @returns {Promise<string[]>} A promise that resolves to an array of suggested strings.
  */
-export async function fetchSuggestions(prompt: string, model = "ollama", temperature = 0.2, top_k = 0, top_p = 1, maxTokens = 256): Promise<Result<string[]>> {
+export async function fetchSuggestions(prompt: string, model = "ollama", temperature = 0.2, top_k = 0, top_p = 1, max_tokens = 256, endpoint=AI_ENDPOINT): Promise<Result<string[]>> {
     const startTime = Date.now();
-    
+
     try {
-        const response = await fetch(AI_ENDPOINT, {
+        const response = await fetch(endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ prompt })
+            body: JSON.stringify({ prompt, model, temperature, top_k, top_p, max_tokens }),
         });
 
         const endTime = Date.now(); 
