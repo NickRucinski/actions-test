@@ -39,7 +39,7 @@
             "description": "Temperature value the model will use.",
             "group": "model"
           },
-          "copilot-clone.model.topK": {
+          "copilot-clone.model.top_k": {
             "type": "number",
             "default": 0,
             "minimum": 0,
@@ -47,7 +47,7 @@
             "description": "Top K value the model will use.",
             "group": "model"
           },
-          "copilot-clone.model.topP": {
+          "copilot-clone.model.top_p": {
             "type": "number",
             "default": 1,
             "minimum": 0,
@@ -74,8 +74,8 @@
     ],
     "commands": [
       {
-        "command": "copilotClone.run",
-        "title": "Run CopilotTest"
+        "command": "copilotClone.testFetch",
+        "title": "Debug: Test fetchSuggestions"
       },
       {
         "command": "copilotClone.signIn",

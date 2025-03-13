@@ -37,13 +37,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
         if (userInput) {
             try {
-                const endpoint = vscode.workspace.getConfiguration("copilot-clone").get<string>("debug.AIEndpoint");
-                const model = vscode.workspace.getConfiguration("copilot-clone").get<string>("general.modelSelection");
-                const temperature = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.temperature");
-                const top_k = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.topK");
-                const top_p = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.topP");
-                const max_tokens = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.maxTokens");
-                const result = await fetchSuggestions(userInput, model, temperature, top_k, top_p, max_tokens);
+                const settings = getSettings();
+                const result = await fetchSuggestions(userInput, settings["model"], settings["temperature"], settings["top_k"], 
+                        settings["top_p"], settings["max_tokens"]);
+                        
                 if (result.success) {
                     vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
                 } else {
@@ -206,7 +203,6 @@ async function provideInlineCompletionItems(
     context: vscode.InlineCompletionContext,
     token: vscode.CancellationToken
 ): Promise<vscode.InlineCompletionList | vscode.InlineCompletionItem[]> {
-    // Debounce the function
     return new Promise((resolve) => {
         if (debounceTimer) {
             clearTimeout(debounceTimer); // Clear the previous timer
@@ -228,7 +224,8 @@ async function provideInlineCompletionItems(
 
                 lastPrompt = prompt;
 
-                const result = await fetchSuggestions(prompt);
+                const settings = getSettings();
+                const result = await fetchSuggestions(prompt, settings["model"], settings["temperature"], settings["top_k"], settings["top_p"], settings["max_tokens"]);
                 let suggestions: string[] = [];
 
                 if (result.success && result.data) {
@@ -314,6 +311,21 @@ function handleTextChange(event: vscode.TextDocumentChangeEvent) {
         suggestionStartTime.delete(suggestionId);
         lastSuggestion = "";
     });
+}
+
+/**
+ * Gets the settings for the AI model from the VS Code workspace configuration.
+ * 
+ * @returns {Object} The settings for the AI model, including model selection, temperature, top_k, top_p, and max_tokens.
+ */
+function getSettings() {
+    const model = vscode.workspace.getConfiguration("copilot-clone").get<string>("general.modelSelection");
+    const temperature = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.temperature");
+    const top_k = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.top_k");
+    const top_p = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.top_p");
+    const max_tokens = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.maxTokens");
+
+    return { model, temperature, top_k, top_p, max_tokens };
 }
 
 /**
