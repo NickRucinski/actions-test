@@ -68,6 +68,36 @@ def log_event(event):
     except Exception as e:
         print(f"Exception occurred while logging event: {e}")
         raise e
+    
+def log_suggestion(suggestion):
+    """
+    Logs an event by inserting it into the 'Logs' table in the database.
+
+    Args:
+        event (dict): A dictionary containing event details. Expected keys are:
+            - 'event': The name of the event.
+            - 'time_lapse': A textual description of the event.
+            - 'metadata': Additional data associated with the event.
+
+    Raises:
+        Exception: If there is an error inserting the log into the database.
+    """
+
+    try:
+        response = client.table("suggestions").insert(suggestion).execute()
+
+        if response.data:
+            inserted_suggestion = response.data[0]
+            suggestion['id'] = inserted_suggestion['id'] 
+
+            print(f"LOGGED SUGGESTION: {suggestion}")
+            return suggestion 
+        else:
+            raise Exception("No data returned from the insert operation")
+    
+    except Exception as e:
+        print(f"Exception occurred while logging event: {e}")
+        raise e
 
 
 def get_all_logs():
