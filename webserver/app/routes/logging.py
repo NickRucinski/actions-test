@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint
-from database import log_event, get_all_logs, get_logs_by_user
+from app.database import log_event, get_all_logs, get_logs_by_user
 from flasgger import swag_from
 
 logging_bp = Blueprint('logging', __name__)

@@ -1,37 +1,29 @@
 import base64
 import hashlib
-import os
 import secrets
 
-from dotenv import load_dotenv
 import bcrypt
 from supabase.client import Client, ClientOptions
 from werkzeug.local import LocalProxy
+from flask import g, session, current_app
 
-from flask_storage import FlaskSessionStorage
-from flask import g, session
+def get_session_storage():
+    from app import FlaskSessionStorage
+    return FlaskSessionStorage()
 
-load_dotenv()
-
-SUPABASE_URL: str = os.getenv('SUPABASE_URL')
-SUPABASE_KEY: str = os.getenv('SUPABASE_KEY')
-
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise ValueError("Missing SUPABASE_URL or SUPABASE_KEY. Check your .env file.")
-
-def get_supabase() -> Client:
-    if "supabase" not in g:
-        g.supabase = Client(
-            SUPABASE_URL,
-            SUPABASE_KEY,
+def get_db() -> Client:
+    if "db" not in g:
+        g.db = Client(
+            current_app.config["SUPABASE_URL"],
+            current_app.config["SUPABASE_KEY"],
             options=ClientOptions(
-                storage=FlaskSessionStorage(),
+                storage=get_session_storage(),
                 flow_type="pkce"
             ),
         )
-        return g.supabase
+        return g.db
 
-client: Client = LocalProxy(get_supabase)
+client: Client = LocalProxy(get_db)
 
 def generate_code_verifier():
    """Generate a secure random code verifier (43-128 characters)."""
