@@ -8,8 +8,8 @@ import { LogData, LogEvent } from './types/event';
 let lastPrompt = "";
 
 /** Maps a unique suggestion ID to its timestamp for tracking elapsed time */
-let suggestionStartTime = new Map<string, number>();
-let lastSuggestion = "";
+const suggestionStartTime = new Map<string, number>();
+let lastSuggestion: string | null = null;
 
 /** Timeout handler for debouncing text changes */
 let debounceTimer: NodeJS.Timeout | null = null;
@@ -28,48 +28,95 @@ export async function activate(context: vscode.ExtensionContext) {
 
     console.log("AI Extension Activated");
 
-    // Debug command to force a fetch using input from the user.
-    let disposable = vscode.commands.registerCommand('copilotClone.testFetch', async () => {
-        const userInput = await vscode.window.showInputBox({
-            prompt: 'Enter prompt for suggestion.',
-        });
-        console.log("Test Fetch: \"" + userInput + "\"");
-
-        if (userInput) {
-            try {
-                const settings = getSettings();
-                const result = await fetchSuggestions(userInput, settings["model"], settings["temperature"], settings["top_k"], 
-                        settings["top_p"], settings["max_tokens"]);
-                        
-                if (result.success) {
-                    vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
-                } else {
-                    vscode.window.showErrorMessage(`Error: ${result.error}`);
-                }
-            } catch (error) {
-                vscode.window.showErrorMessage(`Error fetching suggestions: Unknown Error`);
-            }
-        }
-    });
-
-    // Sign in with email command 
     context.subscriptions.push(
-        vscode.commands.registerCommand('copilotClone.signIn', () => signIn(context))
-    );
-    
-    // Inline completion provider
-    context.subscriptions.push(
+        acceptSuggestion,
+        rejectSuggestion,
+        // Sign in with email command 
+        vscode.commands.registerCommand('copilotClone.signIn', () => signIn(context)),
+        testFetchCommand,
+        // Inline completion provider
         vscode.languages.registerInlineCompletionItemProvider(
-            { scheme: 'file' },
+            { scheme: '**' },
             {
                 provideInlineCompletionItems
             }
-        )
+        ),
+        vscode.workspace.onDidChangeTextDocument(handleTextChange),
     );
+}
 
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeTextDocument(handleTextChange)
-    );
+const acceptSuggestion = vscode.commands.registerCommand(
+    'copilotClone.acceptInlineSuggestion',
+    async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+
+        const suggestionId = `${editor.document.uri.toString()}-${editor.selection.start.line}-${editor.selection.start.character}`;
+        await vscode.commands.executeCommand('editor.action.inlineSuggest.commit');
+
+        logSuggestionEvent(suggestionId, true);
+        console.log("TESTING: Accepted Suggestion");
+    }
+);
+
+const rejectSuggestion = vscode.commands.registerCommand(
+    'copilotClone.rejectInlineSuggestion', 
+    async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+
+        const suggestionId = `${editor.document.uri.toString()}-${editor.selection.start.line}-${editor.selection.start.character}`;
+        await vscode.commands.executeCommand('editor.action.inlineSuggest.hide');
+        await vscode.commands.executeCommand('hideSuggestWidget');
+
+        logSuggestionEvent(suggestionId, false);
+        console.log("TESTING: Rejected Suggestion");
+    }
+);
+
+// Debug command to force a fetch using input from the user.
+const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch', async () => {
+    const userInput = await vscode.window.showInputBox({
+        prompt: 'Enter prompt for suggestion.',
+    });
+    console.log("Test Fetch: \"" + userInput + "\"");
+
+    if (userInput) {
+        try {
+            const settings = getSettings();
+            const result = await fetchSuggestions(userInput, settings["model"], settings["temperature"], settings["top_k"], 
+                    settings["top_p"], settings["max_tokens"]);
+                    
+            if (result.success) {
+                vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
+            } else {
+                vscode.window.showErrorMessage(`Error: ${result.error}`);
+            }
+        } catch (error) {
+            vscode.window.showErrorMessage(`Error fetching suggestions: Unknown Error`);
+        }
+    }
+});
+
+function logSuggestionEvent(suggestionId: string, accepted: boolean) {
+    const startTime = suggestionStartTime.get(suggestionId) || 0;
+    const elapsedTime = Date.now() - startTime;
+
+    if (!lastSuggestion || lastSuggestion.trim() === "") {
+        console.log("No active suggestion, ignoring.");
+        return;
+    }
+
+    const logEventType = accepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
+    const logData: LogData = {
+        event: logEventType,
+        time_lapse: elapsedTime,
+        metadata: { userId: "12345", suggestionId, hasBug: false }
+    };
+
+    trackEvent(logData);
+    suggestionStartTime.delete(suggestionId);
+    lastSuggestion = "";
 }
 
 /**
@@ -277,40 +324,38 @@ function shouldFetchSuggestion(prompt: string): boolean {
  * @param {vscode.TextDocumentChangeEvent} event - The text document change event.
  */
 function handleTextChange(event: vscode.TextDocumentChangeEvent) {
-    event.contentChanges.forEach(change => {
-        const suggestionId = `${event.document.uri.toString()}-${change.range.start.line}-${change.range.start.character}`;
-        const isDeletion = change.text === "" && !change.range.isEmpty;
+    // event.contentChanges.forEach(async (change) => {
+    //     const suggestionId = `${event.document.uri.toString()}-${change.range.start.line}-${change.range.start.character}`;
+    //     // const isDeletion = change.text === "" && !change.range.isEmpty;
 
-        if (!suggestionStartTime.has(suggestionId) || isDeletion) {
-            return; // Ignore changes that aren't tied to a suggestion
-        }
+    //     // if (!suggestionStartTime.has(suggestionId) || isDeletion) {
+    //         // return; // Ignore changes that aren't tied to a suggestion
+    //     // }
 
-        const startTime = suggestionStartTime.get(suggestionId) || 0;
-        const elapsedTime = Date.now() - startTime;
+    //     const startTime = suggestionStartTime.get(suggestionId) || 0;
+    //     const elapsedTime = Date.now() - startTime;
 
-        console.log(`Suggestion ID: ${suggestionId}`);
-        console.log(`Last suggestion: ${lastSuggestion}`);
+    //     // console.log(`Suggestion ID: ${suggestionId}`);
+    //     // console.log(`Last suggestion: ${lastSuggestion}`);
         
-        if (!lastSuggestion || lastSuggestion.trim() === "") {
-            console.log("No active suggestion, ignoring.");
-            return;
-        }
+    //     if (!lastSuggestion || lastSuggestion.trim() === "") {
+    //         console.log("No active suggestion, ignoring.");
+    //         return;
+    //     }
+    //     const normalize = (str: string) => str.replace(/\r\n/g, "\n").trim();
+    //     const isFullyAccepted = normalize(change.text) === normalize(lastSuggestion);
 
-        const normalize = (str: string) => str.replace(/\r\n/g, "\n").trim();
-        const isFullyAccepted = normalize(change.text) === normalize(lastSuggestion);
-
-        const logEventType = isFullyAccepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
-        const logData: LogData = {
-            event: logEventType,
-            time_lapse: elapsedTime,
-            metadata: { userId: "12345", suggestionId, hasBug: false }
-        };
-
-        trackEvent(logData);
+    //     const logEventType = accepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
+    //     const logData: LogData = {
+    //         event: logEventType,
+    //         time_lapse: elapsedTime,
+    //         metadata: { userId: "12345", suggestionId, hasBug: false }
+    //     };
+    //     trackEvent(logData);
         
-        suggestionStartTime.delete(suggestionId);
-        lastSuggestion = "";
-    });
+    //     suggestionStartTime.delete(suggestionId);
+    //     lastSuggestion = "";
+    // });
 }
 
 /**

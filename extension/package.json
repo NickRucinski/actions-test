@@ -15,6 +15,18 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "keybindings": [
+      {
+        "command": "copilotClone.acceptInlineSuggestion",
+        "key": "tab",
+        "when": "inlineSuggestionVisible"
+      },
+      {
+        "command": "copilotClone.rejectInlineSuggestion",
+        "key": "ctrl+space",
+        "when": "inlineSuggestionVisible"
+      }
+    ],
     "configuration": [
       {
         "title": "Copilot Clone",
