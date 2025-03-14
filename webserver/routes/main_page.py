@@ -8,6 +8,6 @@ def main_page_route():
     Displays test AI input page
     """
     try:
-        return render_template('test.html')
+        return render_template('index.html')
     except Exception as e:
         return f"Error loading page: {str(e)}", 500
