@@ -4,7 +4,7 @@ name: Documentation
 
 on:
   push:
-    branches: [ "main", "Github-Actions" ]
+    branches: [ "main", "dev", "Github-Actions" ]
 
 jobs:
   python-docs:
