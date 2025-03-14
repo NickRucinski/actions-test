@@ -48,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
             if (!editor) return;
     
             const suggestionId = `${editor.document.uri.toString()}-${editor.selection.start.line}-${editor.selection.start.character}`;
-            await vscode.commands.executeCommand('editor.action.triggerSuggest');
+            await vscode.commands.executeCommand('editor.action.inlineSuggest.hide');
             await vscode.commands.executeCommand('hideSuggestWidget');
     
             logSuggestionEvent(suggestionId, false);
