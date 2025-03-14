@@ -27,79 +27,76 @@ export async function activate(context: vscode.ExtensionContext) {
     checkAndStoreSupabaseSecrets(secretStorage);
 
     console.log("AI Extension Activated");
-    let acceptSuggestion = vscode.commands.registerCommand(
-        'copilotClone.acceptInlineSuggestion', 
-        async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) return;
 
-            const suggestionId = `${editor.document.uri.toString()}-${editor.selection.start.line}-${editor.selection.start.character}`;
-            await vscode.commands.executeCommand('editor.action.inlineSuggest.commit');
-
-            logSuggestionEvent(suggestionId, true);
-            console.log("TESTING: Accepted Suggestion");
-        }
-    );
-
-    let rejectSuggestion = vscode.commands.registerCommand(
-        'copilotClone.rejectInlineSuggestion', 
-        async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) return;
-    
-            const suggestionId = `${editor.document.uri.toString()}-${editor.selection.start.line}-${editor.selection.start.character}`;
-            await vscode.commands.executeCommand('editor.action.inlineSuggest.hide');
-            await vscode.commands.executeCommand('hideSuggestWidget');
-    
-            logSuggestionEvent(suggestionId, false);
-            console.log("TESTING: Rejected Suggestion");
-        }
-    );
-    // Debug command to force a fetch using input from the user.
-    let disposable = vscode.commands.registerCommand('copilotClone.testFetch', async () => {
-        const userInput = await vscode.window.showInputBox({
-            prompt: 'Enter prompt for suggestion.',
-        });
-        console.log("Test Fetch: \"" + userInput + "\"");
-
-        if (userInput) {
-            try {
-                const settings = getSettings();
-                const result = await fetchSuggestions(userInput, settings["model"], settings["temperature"], settings["top_k"], 
-                        settings["top_p"], settings["max_tokens"]);
-                        
-                if (result.success) {
-                    vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
-                } else {
-                    vscode.window.showErrorMessage(`Error: ${result.error}`);
-                }
-            } catch (error) {
-                vscode.window.showErrorMessage(`Error fetching suggestions: Unknown Error`);
-            }
-        }
-    });
-
-    context.subscriptions.push(acceptSuggestion, rejectSuggestion);
-
-    // Sign in with email command 
     context.subscriptions.push(
-        vscode.commands.registerCommand('copilotClone.signIn', () => signIn(context))
-    );
-    
-    // Inline completion provider
-    context.subscriptions.push(
+        acceptSuggestion,
+        rejectSuggestion,
+        // Sign in with email command 
+        vscode.commands.registerCommand('copilotClone.signIn', () => signIn(context)),
+        testFetchCommand,
+        // Inline completion provider
         vscode.languages.registerInlineCompletionItemProvider(
-            { scheme: 'file' },
+            { scheme: '**' },
             {
                 provideInlineCompletionItems
             }
-        )
-    );
-
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeTextDocument(handleTextChange)
+        ),
+        vscode.workspace.onDidChangeTextDocument(handleTextChange),
     );
 }
+
+const acceptSuggestion = vscode.commands.registerCommand(
+    'copilotClone.acceptInlineSuggestion',
+    async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+
+        const suggestionId = `${editor.document.uri.toString()}-${editor.selection.start.line}-${editor.selection.start.character}`;
+        await vscode.commands.executeCommand('editor.action.inlineSuggest.commit');
+
+        logSuggestionEvent(suggestionId, true);
+        console.log("TESTING: Accepted Suggestion");
+    }
+);
+
+const rejectSuggestion = vscode.commands.registerCommand(
+    'copilotClone.rejectInlineSuggestion', 
+    async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+
+        const suggestionId = `${editor.document.uri.toString()}-${editor.selection.start.line}-${editor.selection.start.character}`;
+        await vscode.commands.executeCommand('editor.action.inlineSuggest.hide');
+        await vscode.commands.executeCommand('hideSuggestWidget');
+
+        logSuggestionEvent(suggestionId, false);
+        console.log("TESTING: Rejected Suggestion");
+    }
+);
+
+// Debug command to force a fetch using input from the user.
+const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch', async () => {
+    const userInput = await vscode.window.showInputBox({
+        prompt: 'Enter prompt for suggestion.',
+    });
+    console.log("Test Fetch: \"" + userInput + "\"");
+
+    if (userInput) {
+        try {
+            const settings = getSettings();
+            const result = await fetchSuggestions(userInput, settings["model"], settings["temperature"], settings["top_k"], 
+                    settings["top_p"], settings["max_tokens"]);
+                    
+            if (result.success) {
+                vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
+            } else {
+                vscode.window.showErrorMessage(`Error: ${result.error}`);
+            }
+        } catch (error) {
+            vscode.window.showErrorMessage(`Error fetching suggestions: Unknown Error`);
+        }
+    }
+});
 
 function logSuggestionEvent(suggestionId: string, accepted: boolean) {
     const startTime = suggestionStartTime.get(suggestionId) || 0;
