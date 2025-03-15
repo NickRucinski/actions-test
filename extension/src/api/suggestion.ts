@@ -4,7 +4,7 @@ import { Suggestion, SuggestionResult } from "../types/suggetsion";
 import { trackEvent } from "./log";
 
 /* Endpoint for creating new AI suggestions */
-const AI_ENDPOINT: string = "https://ai.nickrucinski.com/suggestion";
+const AI_ENDPOINT: string = "http://127.0.0.1:8001/suggestion";
 
 /* Endpoint for saving AI suggestions */
 const LOG_SUGGESTION_ENDPOINT: string = "http://127.0.0.1:8001/log-suggestion";
@@ -21,12 +21,13 @@ const LOG_SUGGESTION_ENDPOINT: string = "http://127.0.0.1:8001/log-suggestion";
  * @returns {Promise<string[]>} A promise that resolves to an array of suggested strings.
  */
 export async function fetchSuggestions(
-    prompt: string, model = "ollama", 
-    temperature = 0.2, 
-    top_k = 0, 
-    top_p = 1, 
-    max_tokens = 256, 
-    endpoint=AI_ENDPOINT
+    prompt: string, 
+    model: string = "ollama", 
+    temperature: number = 0.2, 
+    top_k: number = 0, 
+    top_p: number = 1, 
+    max_tokens: number = 256, 
+    endpoint = AI_ENDPOINT
 ): Promise<Result<SuggestionResult>> {
     const startTime = Date.now();
 
@@ -56,7 +57,7 @@ export async function fetchSuggestions(
                 suggestionText: data.suggestions.join(", "),
                 hasBug,
                 model: model
-            }
+            };
 
             const result = await saveSuggestionToDatabase(suggestion);
             const suggestionId = result.success && result.data ? result.data.id : "";
