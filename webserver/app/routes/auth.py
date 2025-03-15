@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint, redirect
-from app.database import login, callback
+from app.controllers.database import login, callback
 
 auth_bp = Blueprint('auth', __name__)
 

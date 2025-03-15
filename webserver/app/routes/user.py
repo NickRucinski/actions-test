@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.database import get_user_by_id, create_user
+from app.controllers.database import get_user_by_id, create_user
 from flasgger import swag_from
 
 users_bp = Blueprint('users', __name__)

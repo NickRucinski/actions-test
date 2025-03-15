@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.ai import getSuggestion
-import requests
+from app.controllers.ai import getSuggestion
 from flasgger import swag_from
 
 suggestions_bp = Blueprint('suggestions', __name__)
