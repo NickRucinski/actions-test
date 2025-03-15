@@ -2,7 +2,6 @@ import base64
 import hashlib
 import secrets
 
-import bcrypt
 from supabase.client import Client, ClientOptions
 from werkzeug.local import LocalProxy
 from flask import g, session, current_app
@@ -140,94 +139,3 @@ def get_logs_by_user(user_id):
     except Exception as e:
         print(f"Exception occurred while fetching logs for user {user_id}: {e}")
         raise e
-    
-def get_user_by_id(user_id):
-    """
-    Fetch a single user by ID.
-
-    Args:
-        user_id (str): The unique identifier of the user.
-
-    Returns:
-        dict: A dictionary containing user details if found.
-        None: If the user does not exist.
-
-    Raises:
-        Exception: If there is an error during the database query.
-    """
-    try:
-        response = client.table("users").select("*").eq("id", user_id).execute()
-
-        if response.error:
-            raise Exception(f"Error fetching user {user_id}: {response.error}")
-
-        if not response.data:
-            return None
-        
-        return response.data[0]
-    
-    except Exception as e:
-        print(f"Exception occurred while fetching user {user_id}: {e}")
-        raise e
-    
-def create_user(first_name, last_name, email, password):
-    """
-    Create a user in the database
-
-        Args:
-        first_name (str): The first name of the user.
-        last_name (str): The last name of the user.
-        email (str): The email address of the user.
-        password (str): The user's password (hashed before storage).
-
-    Returns:
-        tuple: A tuple containing:
-            - dict: The created user data (if successful).
-            - int: HTTP status code (201 for success, 400 for errors, 500 for server errors).
-
-    Raises:
-        Exception: If there is an issue with database insertion.
-    """
-    try:
-        existing_user = client.table("users").select("id").eq("email", email).execute()
-        if existing_user.data:
-            return {"error": "Email already exists"}, 400
-        
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
-        response = client.table("users").insert({
-            "first_name": first_name,
-            "last_name": last_name,
-            "email": email,
-            "password": hashed_password
-        }).execute()
-
-        if response.error:
-            raise Exception(f"Error creating user: {response.error}")
-
-        return response.data[0], 201
-    
-    except Exception as e:
-        print(f"Exception while creating user: {e}")
-        return {"error": "Internal server error"}, 500
-
-
-def login(request):
-    session.clear()  # Ensure we start fresh each time
-    res = client.auth.sign_in_with_oauth(
-        {
-            "provider": "github",
-            "options": {
-                "redirect_to": "https://ai.nickrucinski.com/auth/callback"
-            },
-        }
-    )
-    return res
-
-def callback(code):
-    try:
-        # Supabase automatically retrieves and verifies the code_verifier from the session
-        res = client.auth.exchange_code_for_session({"auth_code": code})
-        print("Authentication successful:", res)
-    except Exception as e:
-        return f"Authentication failed: {str(e)}", 500
