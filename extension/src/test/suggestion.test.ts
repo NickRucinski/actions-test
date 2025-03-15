@@ -14,7 +14,7 @@ describe("fetchSuggestions", () => {
 
         if (result.success) {
             expect(Array.isArray(result.data)).toBe(true);
-            expect(result.data.length).toBeGreaterThan(0);
+            expect(result.data.suggestions.length).toBeGreaterThan(0);
         }
     });
 

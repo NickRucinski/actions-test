@@ -5,11 +5,14 @@ import * as dotenv from 'dotenv';
 import { LogData, LogEvent } from './types/event';
 
 /** Stores the last used prompt to prevent redundant requests */
-let lastPrompt = "";
+// let lastPrompt = "";
 
 /** Maps a unique suggestion ID to its timestamp for tracking elapsed time */
 const suggestionStartTime = new Map<string, number>();
-let lastSuggestion: string | null = null;
+let suggestionContext = {
+    id: "",
+    hasBug: false
+};
 
 /** Timeout handler for debouncing text changes */
 let debounceTimer: NodeJS.Timeout | null = null;
@@ -36,7 +39,7 @@ export async function activate(context: vscode.ExtensionContext) {
         testFetchCommand,
         // Inline completion provider
         vscode.languages.registerInlineCompletionItemProvider(
-            { scheme: '**' },
+            { scheme: 'file' },
             {
                 provideInlineCompletionItems
             }
@@ -51,10 +54,9 @@ const acceptSuggestion = vscode.commands.registerCommand(
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
 
-        const suggestionId = `${editor.document.uri.toString()}-${editor.selection.start.line}-${editor.selection.start.character}`;
         await vscode.commands.executeCommand('editor.action.inlineSuggest.commit');
 
-        logSuggestionEvent(suggestionId, true);
+        logSuggestionEvent(true);
         console.log("TESTING: Accepted Suggestion");
     }
 );
@@ -65,11 +67,10 @@ const rejectSuggestion = vscode.commands.registerCommand(
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
 
-        const suggestionId = `${editor.document.uri.toString()}-${editor.selection.start.line}-${editor.selection.start.character}`;
         await vscode.commands.executeCommand('editor.action.inlineSuggest.hide');
         await vscode.commands.executeCommand('hideSuggestWidget');
 
-        logSuggestionEvent(suggestionId, false);
+        logSuggestionEvent(false);
         console.log("TESTING: Rejected Suggestion");
     }
 );
@@ -88,7 +89,7 @@ const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch
                     settings["top_p"], settings["max_tokens"]);
                     
             if (result.success) {
-                vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
+                vscode.window.showInformationMessage(`Suggestions: ${result.data.suggestions.join(", ")}`);
             } else {
                 vscode.window.showErrorMessage(`Error: ${result.error}`);
             }
@@ -98,14 +99,15 @@ const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch
     }
 });
 
-function logSuggestionEvent(suggestionId: string, accepted: boolean) {
+function logSuggestionEvent(accepted: boolean) {
+    const suggestionId = suggestionContext.id;
     const startTime = suggestionStartTime.get(suggestionId) || 0;
     const elapsedTime = Date.now() - startTime;
 
-    if (!lastSuggestion || lastSuggestion.trim() === "") {
-        console.log("No active suggestion, ignoring.");
-        return;
-    }
+    // if (!lastSuggestion || lastSuggestion.trim() === "") {
+    //     console.log("No active suggestion, ignoring.");
+    //     return;
+    // }
 
     const logEventType = accepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
     const logData: LogData = {
@@ -116,7 +118,7 @@ function logSuggestionEvent(suggestionId: string, accepted: boolean) {
 
     trackEvent(logData);
     suggestionStartTime.delete(suggestionId);
-    lastSuggestion = "";
+    // lastSuggestion = "";
 }
 
 /**
@@ -250,6 +252,8 @@ async function provideInlineCompletionItems(
     context: vscode.InlineCompletionContext,
     token: vscode.CancellationToken
 ): Promise<vscode.InlineCompletionList | vscode.InlineCompletionItem[]> {
+    console.log("Inline Completion Triggered");
+
     return new Promise((resolve) => {
         if (debounceTimer) {
             clearTimeout(debounceTimer); // Clear the previous timer
@@ -269,21 +273,25 @@ async function provideInlineCompletionItems(
                     return;
                 }
 
-                lastPrompt = prompt;
+                // lastPrompt = prompt;
+
+                console.log("Fetching suggestion for prompt:", prompt);
 
                 const settings = getSettings();
                 const result = await fetchSuggestions(prompt, settings["model"], settings["temperature"], settings["top_k"], settings["top_p"], settings["max_tokens"]);
-                let suggestions: string[] = [];
 
                 if (result.success && result.data) {
-                    suggestions = result.data;
-                    lastSuggestion = suggestions[0];
+                    const { suggestions, suggestionId, hasBug } = result.data;
+                    suggestionContext = { 
+                        id: suggestionId, 
+                        hasBug
+                    };
 
                     // Create InlineCompletionItems
                     const completionItems = suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion));
 
                     // Set suggestionStartTime when the suggestion is returned
-                    const suggestionId = `${document.uri.toString()}-${position.line}-${position.character}`;
+
                     suggestionStartTime.set(suggestionId, Date.now());
 
                     resolve(completionItems);

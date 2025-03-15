@@ -1,13 +1,16 @@
 import * as vscode from "vscode";
 import { Result } from "./types/result";
 import { LogData, LogEvent } from "./types/event";
+import { Suggestion, SuggestionResult } from "./types/suggetsion";
 
 /** Endpoint for creating new AI suggestions */
 const AI_ENDPOINT: string = "https://ai.nickrucinski.com/suggestion";
 
 /** Endpoint for logging information */
 const LOG_ENDPOINT: string = "https://ai.nickrucinski.com/logs";
-// , endpoint = AI_ENDPOINT, model = "ollama", temperature = 0.2, topK = 0, topP = 1, maxTokens = 256
+
+const LOG_SUGGESTION_ENDPOINT: string = "http://127.0.0.1:8001/log-suggestion";
+
 /**
  * Fetches AI-generated suggestions based on the given prompt.
  *
@@ -19,7 +22,14 @@ const LOG_ENDPOINT: string = "https://ai.nickrucinski.com/logs";
  * @param {string} max_tokens - The max number of tokens allowed for response length.
  * @returns {Promise<string[]>} A promise that resolves to an array of suggested strings.
  */
-export async function fetchSuggestions(prompt: string, model = "ollama", temperature = 0.2, top_k = 0, top_p = 1, max_tokens = 256, endpoint=AI_ENDPOINT): Promise<Result<string[]>> {
+export async function fetchSuggestions(
+    prompt: string, model = "ollama", 
+    temperature = 0.2, 
+    top_k = 0, 
+    top_p = 1, 
+    max_tokens = 256, 
+    endpoint=AI_ENDPOINT
+): Promise<Result<SuggestionResult>> {
     const startTime = Date.now();
 
     try {
@@ -33,6 +43,7 @@ export async function fetchSuggestions(prompt: string, model = "ollama", tempera
 
         const endTime = Date.now(); 
         const elapsedTime = endTime - startTime;
+        let hasBug = false;
 
         if (!response.ok) {
             return { status: response.status, success: false, error: `Error: ${response.status} ${response.statusText}` };
@@ -41,15 +52,32 @@ export async function fetchSuggestions(prompt: string, model = "ollama", tempera
         const data = await response.json() as { suggestions?: string[]; error?: string };
 
         if (data.suggestions && data.suggestions) {
+            const suggestion: Suggestion = {
+                id: "",
+                prompt,
+                suggestionText: data.suggestions.join(", "),
+                hasBug,
+                model: model
+            }
+
+            console.log("AI Suggestions:", data.suggestions);
+
+            const result = await saveSuggestionToDatabase(suggestion);
+            let suggestionId = "";
+
+            if (result.success && result.data) {
+                suggestionId = result.data.id;
+            }
+
             const logData: LogData = {
                 event: LogEvent.MODEL_GENERATE,
                 time_lapse: elapsedTime,
-                metadata: { prompt: prompt, suggestions: data.suggestions }
+                metadata: { suggestion_id: suggestionId, has_bug: hasBug },
             };
     
             trackEvent(logData);
 
-            return { status: response.status, success: true, data: data.suggestions };
+            return { status: response.status, success: true, data: { suggestions: data.suggestions, suggestionId, hasBug } };
         }
 
         return { status: response.status, success: false, error: data.error || "Unknown error" };
@@ -61,7 +89,7 @@ export async function fetchSuggestions(prompt: string, model = "ollama", tempera
 /**
  * Logs the user's decision on an AI-generated suggestion.
  *
- * @param {LogData} logData - The suggestion text that was acted upon.
+ * @param {LogData} logData - The data being logged.
  */
 export function trackEvent(logData: LogData): void {
     const body = JSON.stringify(logData);
@@ -73,5 +101,45 @@ export function trackEvent(logData: LogData): void {
         headers: { "Content-Type": "application/json" },
         body: body,
     }).catch(err => console.error("Failed to log data:", err));
-    console.log("Elapsed time:", logData.time_lapse);
+}
+
+/**
+ * Save AI-generated suggestion.
+ *
+ * @param {Suggestion} suggestion - The suggestion text that was acted upon.
+ */
+async function saveSuggestionToDatabase(suggestion: Suggestion) : Promise<Result<Suggestion>> {
+    const body = JSON.stringify(suggestion);
+
+    console.log("Saving suggestion...", body);
+
+    try {
+        const response = await fetch(LOG_SUGGESTION_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: body,
+        });
+
+        if (!response.ok) {
+            return {
+                status: response.status,
+                success: false,
+                error: `Error: ${response.status} ${response.statusText}`,
+            };
+        }
+
+        const data: Suggestion = await response.json();
+        return {
+            status: response.status,
+            success: true,
+            data: data,
+        };
+    } catch (err) {
+        console.error("Failed to save suggestion:", err);
+        return {
+            status: 500,
+            success: false,
+            error: "Failed to connect to server.",
+        };
+    }
 }
