@@ -1,3 +1,5 @@
+from flask import jsonify
+import bcrypt
 
 class User:
     created_at: str
@@ -13,3 +15,10 @@ class User:
 
     def get_user(self):
         return self
+    
+    def to_json(self):
+        return jsonify(self.__dict__)
+
+    @staticmethod
+    def hash_password(password: str) -> str:
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')

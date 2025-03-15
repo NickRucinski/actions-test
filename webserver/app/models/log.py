@@ -1,4 +1,5 @@
 from enum import Enum
+from flask import jsonify
 
 class event_type(Enum):
     MODEL_GENERATE = 1
@@ -21,3 +22,6 @@ class Log:
 
     def get_log(self):
         return self
+    
+    def to_json(self):
+        return jsonify(self.__dict__)
