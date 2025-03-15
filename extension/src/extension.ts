@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { fetchSuggestions, trackEvent } from './api';
 import { checkAndStoreSupabaseSecrets, getSupabaseClient } from './supabaseClient';
-import * as dotenv from 'dotenv';
 import { LogData, LogEvent } from './types/event';
+import { trackEvent } from './api/log';
+import { fetchSuggestions } from './api/suggestion';
 
 /** Stores the last used prompt to prevent redundant requests */
 // let lastPrompt = "";
@@ -44,7 +44,6 @@ export async function activate(context: vscode.ExtensionContext) {
                 provideInlineCompletionItems
             }
         ),
-        vscode.workspace.onDidChangeTextDocument(handleTextChange),
     );
 }
 
@@ -118,7 +117,6 @@ function logSuggestionEvent(accepted: boolean) {
 
     trackEvent(logData);
     suggestionStartTime.delete(suggestionId);
-    // lastSuggestion = "";
 }
 
 /**
@@ -252,8 +250,6 @@ async function provideInlineCompletionItems(
     context: vscode.InlineCompletionContext,
     token: vscode.CancellationToken
 ): Promise<vscode.InlineCompletionList | vscode.InlineCompletionItem[]> {
-    console.log("Inline Completion Triggered");
-
     return new Promise((resolve) => {
         if (debounceTimer) {
             clearTimeout(debounceTimer); // Clear the previous timer
@@ -324,46 +320,6 @@ function shouldFetchSuggestion(prompt: string): boolean {
     if (!/\s$/.test(prompt)) { return false; } // Fetch only after a space or punctuation
     //if (prompt === lastPrompt) { return false; } // Avoid redundant requests
     return true;
-}
-
-/**
- * Handles text document changes and logs whether an AI suggestion was accepted or rejected.
- *
- * @param {vscode.TextDocumentChangeEvent} event - The text document change event.
- */
-function handleTextChange(event: vscode.TextDocumentChangeEvent) {
-    // event.contentChanges.forEach(async (change) => {
-    //     const suggestionId = `${event.document.uri.toString()}-${change.range.start.line}-${change.range.start.character}`;
-    //     // const isDeletion = change.text === "" && !change.range.isEmpty;
-
-    //     // if (!suggestionStartTime.has(suggestionId) || isDeletion) {
-    //         // return; // Ignore changes that aren't tied to a suggestion
-    //     // }
-
-    //     const startTime = suggestionStartTime.get(suggestionId) || 0;
-    //     const elapsedTime = Date.now() - startTime;
-
-    //     // console.log(`Suggestion ID: ${suggestionId}`);
-    //     // console.log(`Last suggestion: ${lastSuggestion}`);
-        
-    //     if (!lastSuggestion || lastSuggestion.trim() === "") {
-    //         console.log("No active suggestion, ignoring.");
-    //         return;
-    //     }
-    //     const normalize = (str: string) => str.replace(/\r\n/g, "\n").trim();
-    //     const isFullyAccepted = normalize(change.text) === normalize(lastSuggestion);
-
-    //     const logEventType = accepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
-    //     const logData: LogData = {
-    //         event: logEventType,
-    //         time_lapse: elapsedTime,
-    //         metadata: { userId: "12345", suggestionId, hasBug: false }
-    //     };
-    //     trackEvent(logData);
-        
-    //     suggestionStartTime.delete(suggestionId);
-    //     lastSuggestion = "";
-    // });
 }
 
 /**

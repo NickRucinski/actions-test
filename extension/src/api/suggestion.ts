@@ -1,14 +1,12 @@
-import * as vscode from "vscode";
-import { Result } from "./types/result";
-import { LogData, LogEvent } from "./types/event";
-import { Suggestion, SuggestionResult } from "./types/suggetsion";
+import { LogData, LogEvent } from "../types/event";
+import { Result } from "../types/result";
+import { Suggestion, SuggestionResult } from "../types/suggetsion";
+import { trackEvent } from "./log";
 
-/** Endpoint for creating new AI suggestions */
+/* Endpoint for creating new AI suggestions */
 const AI_ENDPOINT: string = "https://ai.nickrucinski.com/suggestion";
 
-/** Endpoint for logging information */
-const LOG_ENDPOINT: string = "https://ai.nickrucinski.com/logs";
-
+/* Endpoint for saving AI suggestions */
 const LOG_SUGGESTION_ENDPOINT: string = "http://127.0.0.1:8001/log-suggestion";
 
 /**
@@ -60,14 +58,8 @@ export async function fetchSuggestions(
                 model: model
             }
 
-            console.log("AI Suggestions:", data.suggestions);
-
             const result = await saveSuggestionToDatabase(suggestion);
-            let suggestionId = "";
-
-            if (result.success && result.data) {
-                suggestionId = result.data.id;
-            }
+            const suggestionId = result.success && result.data ? result.data.id : "";
 
             const logData: LogData = {
                 event: LogEvent.MODEL_GENERATE,
@@ -84,23 +76,6 @@ export async function fetchSuggestions(
     } catch (error: any) {
         return { status: 500, success: false, error: error.message || "Unknown error" };
     }
-}
-
-/**
- * Logs the user's decision on an AI-generated suggestion.
- *
- * @param {LogData} logData - The data being logged.
- */
-export function trackEvent(logData: LogData): void {
-    const body = JSON.stringify(logData);
-
-    console.log("Logging event...", body);
-
-    fetch(LOG_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: body,
-    }).catch(err => console.error("Failed to log data:", err));
 }
 
 /**
@@ -128,11 +103,11 @@ async function saveSuggestionToDatabase(suggestion: Suggestion) : Promise<Result
             };
         }
 
-        const data: Suggestion = await response.json();
+        const data = await response.json();
         return {
             status: response.status,
             success: true,
-            data: data,
+            data: data.data,
         };
     } catch (err) {
         console.error("Failed to save suggestion:", err);

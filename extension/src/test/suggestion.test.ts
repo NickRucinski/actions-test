@@ -1,4 +1,4 @@
-import { fetchSuggestions } from "../api";
+import { fetchSuggestions } from "../api/suggestion";
 
 describe("fetchSuggestions", () => {
     it("should return success with status 200", async () => {
