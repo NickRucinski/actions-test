@@ -1,12 +1,13 @@
 from flask import Blueprint, request, jsonify
 import openai_api as openai
 import requests
+from gemini_api import get_code_suggestions
 from flasgger import swag_from
 
 suggestions_bp = Blueprint('suggestions', __name__)
 
 OLLAMA_URL = "http://localhost:11434/api/generate"  
-DEFAULT_MODEL_NAME = "copilot-style-codellama:latest"
+DEFAULT_MODEL_NAME = "llama3.2:latest"  # Default model to use if none is specified
 
 # system command to create a special AI model
 # {
@@ -117,8 +118,16 @@ def generate_suggestion_route():
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
     
+    # Gemini model detected
+    if model_name == "gemini":
+        try:
+            suggestions = get_code_suggestions(prompt)
+            return jsonify({"suggestions": suggestions})
+        except Exception as e:
+            print(f"Error fetching Gemini suggestion: {e}")
+            return jsonify({"error": str(e)}), 500
     # ChatGPT model detected.
-    if ("gpt" in model_name):
+    elif ("gpt" in model_name):
         try:
             response = openai.getSuggestion(prompt, commands, model=model_name, temperature=temperature, top_p=top_p, max_tokens=max_tokens)
             return jsonify({"suggestions": [response["suggestions"]]})

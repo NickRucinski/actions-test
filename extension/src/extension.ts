@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { checkAndStoreSupabaseSecrets, getSupabaseClient } from './supabaseClient';
+import { checkAndStoreSupabaseSecrets, getSupabaseClient } from './auth/supabaseClient';
 import { LogData, LogEvent } from './types/event';
 import { trackEvent } from './api/log';
 import { fetchSuggestions } from './api/suggestion';
@@ -32,7 +32,6 @@ export async function activate(context: vscode.ExtensionContext) {
         ),
     );
 }
-
 
 // Debug command to force a fetch using input from the user.
 const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch', async () => {
