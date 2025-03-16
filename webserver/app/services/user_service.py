@@ -1,5 +1,6 @@
 from app.controllers.database import client
 from app.models.user import User
+from app.models.errors import UserAlreadyExistsError, DatabaseError
 
 def get_user_by_id(user_id: str):
     """
@@ -46,7 +47,7 @@ def create_user(first_name: str, last_name: str, email: str, password: str):
     try:
         existing_user = client.table("users").select("id").eq("email", email).execute()
         if existing_user.data:
-            return {"error": "Email already exists"}, 400
+            raise UserAlreadyExistsError()
 
         hashed_password = User.hash_password(password)
 
@@ -58,7 +59,7 @@ def create_user(first_name: str, last_name: str, email: str, password: str):
         }).execute()
 
         if response.error:
-            raise Exception(f"Error creating user: {response.error}")
+            raise DatabaseError(f"Error creating user: {response.error}")
 
         return response.data[0], 201
     except Exception as e:
