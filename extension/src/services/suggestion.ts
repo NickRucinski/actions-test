@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { trackEvent } from '../api/log';
-import { LogData, LogEvent } from '../types/event';
 import { fetchSuggestions } from '../api/suggestion';
+import { createCodeComparisonWebview } from '../utils/views';
+import { logSuggestionEvent } from './log';
 
 /** 
  * Tracks contextual information for a suggestion, including its unique ID, 
@@ -95,7 +95,30 @@ export const acceptSuggestion = vscode.commands.registerCommand(
 
         await vscode.commands.executeCommand('editor.action.inlineSuggest.commit');
 
-        logSuggestionEvent(true);
+        if (suggestionContext.hasBug) {
+            vscode.window.showWarningMessage(
+                'Warning: The accepted suggestion may contain a bug. Please review the code carefully.',
+                { modal: true },
+                'Review Code',
+                'Ignore'
+            ).then(async (selection) => {
+                if (selection === 'Review Code') {
+                    if (selection === 'Review Code') {
+                        // Get the original code (before the suggestion)
+                        const rigthCode = "This is the right code";
+    
+                        // Get the suggested code (from the suggestion context)
+                        const wrongCode = "This is the wrong code";
+    
+                        // Create a Webview to display the code comparison
+                        createCodeComparisonWebview(rigthCode, wrongCode);
+                    }
+                }
+            });
+        }
+
+        logSuggestionEvent(true, suggestionContext);
+        resetSuggestionContext();
     }
 );
 
@@ -112,28 +135,18 @@ export const rejectSuggestion = vscode.commands.registerCommand(
         await vscode.commands.executeCommand('editor.action.inlineSuggest.hide');
         await vscode.commands.executeCommand('hideSuggestWidget');
 
-        logSuggestionEvent(false);
+        logSuggestionEvent(false, suggestionContext);
+        resetSuggestionContext();
     }
 );
 
 /**
- * Logs an event when a suggestion is either accepted or rejected.
- * Tracks the elapsed time, suggestion ID, and whether the suggestion was accepted.
- * Resets the suggestion context after logging.
- *
- * @param {boolean} accepted - Whether the suggestion was accepted (true) or rejected (false).
+ * Resets the suggestion context to its initial state.
  */
-const logSuggestionEvent = (accepted: boolean) => {
-    const { suggestionId, hasBug, startTime } = suggestionContext;
-    const elapsedTime = Date.now() - startTime;
-
-    const logEventType = accepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
-    const logData: LogData = {
-        event: logEventType,
-        time_lapse: elapsedTime,
-        metadata: { userId: "12345", suggestionId, hasBug: false }
+const resetSuggestionContext = () => {
+    suggestionContext = {
+        suggestionId: "",
+        hasBug: false,
+        startTime: 0
     };
-
-    trackEvent(logData);
-    suggestionContext = { suggestionId: "", hasBug: false, startTime: 0 }; // Reset context
 };

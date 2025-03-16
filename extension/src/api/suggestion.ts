@@ -1,6 +1,7 @@
 import { LogData, LogEvent } from "../types/event";
 import { Result } from "../types/result";
 import { Suggestion, SuggestionResult } from "../types/suggetsion";
+import { hasBugRandomly } from "../utils/bug";
 import { trackEvent } from "./log";
 
 /* Endpoint for creating new AI suggestions */
@@ -30,6 +31,9 @@ export async function fetchSuggestions(
     endpoint = AI_ENDPOINT
 ): Promise<Result<SuggestionResult>> {
     const startTime = Date.now();
+    const hasBug = hasBugRandomly();
+
+    console.log(`Generating suggestion ${hasBug ? "WITH" : "WITHOUT"} bug...`);
 
     try {
         const response = await fetch(endpoint, {
@@ -42,7 +46,6 @@ export async function fetchSuggestions(
 
         const endTime = Date.now(); 
         const elapsedTime = endTime - startTime;
-        let hasBug = false;
 
         if (!response.ok) {
             return { status: response.status, success: false, error: `Error: ${response.status} ${response.statusText}` };
@@ -86,8 +89,6 @@ export async function fetchSuggestions(
  */
 async function saveSuggestionToDatabase(suggestion: Suggestion) : Promise<Result<Suggestion>> {
     const body = JSON.stringify(suggestion);
-
-    console.log("Saving suggestion...", body);
 
     try {
         const response = await fetch(LOG_SUGGESTION_ENDPOINT, {
