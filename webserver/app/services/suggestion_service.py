@@ -1,4 +1,5 @@
 from app.controllers.ai import client, vendors, good_command, bad_command, OLLAMA_URL
+from app.models.errors import ModelError
 import requests
 
 def getSuggestion(
@@ -76,11 +77,11 @@ def getSuggestionFromOpenAI(
             messages=messages
         )
         
-        return {"suggestions": completion.choices[0].message.content}
+        return completion.choices[0].message.content
     
     except Exception as e:
         print(f"Error generating suggestion using OpenAI's API: {e}")
-        raise Exception(f"Error generating suggestion using OpenAI's API: {e}")
+        raise ModelError(f"Error generating suggestion using OpenAI's API: {e}")
 
 def getSuggestionFromOllama(prompt: str, model_name: str, is_correct: bool):
     """
@@ -103,8 +104,8 @@ def getSuggestionFromOllama(prompt: str, model_name: str, is_correct: bool):
         )
         response.raise_for_status()  # Raise exception for HTTP errors
         result = response.json()
-        return {"suggestions": result["response"]}
+        return result["response"]
     
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"Error fetching Ollama suggestion: {e}")
-        raise Exception(f"Error fetching Ollama suggestion: {e}")
+        raise ModelError(f"Error fetching Ollama suggestion: {e}")

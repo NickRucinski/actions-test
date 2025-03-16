@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.services.suggestion_service import getSuggestion
+from app.models.response import *
 from flasgger import swag_from
 
 suggestions_bp = Blueprint('suggestions', __name__)
@@ -87,7 +88,11 @@ def generate_suggestion_route():
     is_correct = data.get("isCorrect", True)
 
     if not prompt:
-        return jsonify({"error": "No prompt provided"}), 400
+        return error_response(
+            "No prompt provided",
+            None,
+            StatusCodes.BAD_REQUEST
+        )
 
     try:
         # Call getSuggestion with all parameters, it will decide which model to use
@@ -101,8 +106,15 @@ def generate_suggestion_route():
             is_correct=is_correct
         )
 
-        return jsonify({"suggestions": [response["suggestions"]]})
+        return success_response(
+            "AI Suggestions",
+            { "suggestions": [response["suggestions"]]},
+            StatusCodes.OK
+        )
     
     except Exception as e:
-        print(f"Error fetching suggestion: {e}")
-        return jsonify({"error": str(e)}), 500
+        return error_response(
+            e.message,
+            None,
+            e.status_code
+        )

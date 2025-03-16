@@ -1,8 +1,12 @@
 from flask import Blueprint, request, jsonify
 from app.services.user_service import get_user_by_id, create_user
+from app.models.response import *
 from flasgger import swag_from
 
+
+
 users_bp = Blueprint('users', __name__)
+
 
 @users_bp.route('/users/<user_id>', methods=['GET'])
 @swag_from({
@@ -46,13 +50,26 @@ def get_user_route(user_id):
         user = get_user_by_id(user_id)
 
         if not user:
-            return jsonify({"status": "error", "message": "User not found"}), 404
+            return success_response(
+                f"User not found for id {user_id}",
+                None,
+                StatusCodes.NOT_FOUND
+            )
 
-        return jsonify(user), 200
-    except Exception as e:
-        print(f"Error fetching user {user_id}: {e}")
-        return jsonify({"status": "error", "message": "Internal server error"}), 500
+        return success_response(
+            f"User for id {user_id}",
+            user.to_json(),
+            StatusCodes.OK
+        )
     
+    except Exception as e:
+        return error_response(
+            f"Error fetching user {user_id}: {e}",
+            None,
+            StatusCodes.SERVER_ERROR
+        )
+    
+
 @users_bp.route('/users', methods=['POST'])
 @swag_from({
     'tags': ['Users'],
@@ -115,13 +132,31 @@ def create_user_route():
     data = request.json
 
     required_fields = ['first_name', 'last_name', 'email', 'password']
+
     if not all(field in data and data[field] for field in required_fields):
-        return jsonify({"error": "Missing required fields"}), 400
+        return error_response(
+            f"Missing required fields: {', '.join(required_fields)}",
+            None,
+            StatusCodes.BAD_REQUEST
+        )
 
     first_name = data["first_name"]
     last_name = data["last_name"]
     email = data["email"]
     password = data["password"]
 
-    result, status_code = create_user(first_name, last_name, email, password)
-    return jsonify(result), status_code
+    try:
+        response = create_user(first_name, last_name, email, password)
+        return success_response(
+            "User created successfully",
+            None,
+            StatusCodes.CREATED
+        )
+    
+    except Exception as e:
+        return error_response(
+            "Error creating user",
+            {
+                "error": e
+            }
+        )

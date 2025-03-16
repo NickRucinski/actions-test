@@ -2,6 +2,8 @@ from app.controllers.database import client
 from app.models.user import User
 from app.models.errors import UserAlreadyExistsError, DatabaseError
 
+
+
 def get_user_by_id(user_id: str):
     """
     Fetch a single user by ID.
@@ -20,11 +22,14 @@ def get_user_by_id(user_id: str):
         response = client.table("users").select("*").eq("id", user_id).execute()
         if not response.data:
             return None
+        
         user_data = response.data[0]
         return User(**user_data)
+    
     except Exception as e:
         print(f"Error fetching user {user_id}: {e}")
         raise e
+
 
 def create_user(first_name: str, last_name: str, email: str, password: str):
     """
@@ -61,7 +66,8 @@ def create_user(first_name: str, last_name: str, email: str, password: str):
         if response.error:
             raise DatabaseError(f"Error creating user: {response.error}")
 
-        return response.data[0], 201
+        return response.data[0]
+    
     except Exception as e:
         print(f"Error while creating user: {e}")
-        return {"error": "Internal server error"}, 500
+        raise e

@@ -1,8 +1,12 @@
-from flask import request, jsonify, Blueprint
+from flask import request, Blueprint
 from app.services.log_service import log_event, get_all_logs, get_logs_by_user, log_suggestion
 from flasgger import swag_from
+from app.models.response import *
+
+
 
 logging_bp = Blueprint('logging', __name__)
+
 
 @logging_bp.route('/logs', methods=['POST'])
 @swag_from({
@@ -72,14 +76,26 @@ def log_event_route():
     missing_fields = [field for field in required_fields if field not in data]
 
     if missing_fields:
-        return jsonify({"status": "error", "message": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+        return error_response(
+            f"Missing required fields: {', '.join(missing_fields)}",
+            None,
+            StatusCodes.BAD_REQUEST
+        )
 
     try:
         log_event(data)
-        return jsonify({"status": "logged"}), 200
+        return success_response(
+            "Logged event",
+            None,
+            StatusCodes.CREATED
+        )
+    
     except Exception as e:
-        print(f"Error in logging event: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return error_response(
+            f"Error logging event: {e}",
+            None,
+            StatusCodes.SERVER_ERROR
+        )
 
 
 @logging_bp.route('/logs', methods=['GET'])
@@ -108,18 +124,27 @@ def log_event_route():
         }
     }
 })
-def get_logs_route():
+def get_all_logs_route():
     """
     Retrieve all logs in the database
     See Swagger docs for more information.
     """
     try:
         logs = get_all_logs()
-        return jsonify(logs), 200
-    except Exception as e:
-        print(f"Error fetching logs: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return success_response(
+            "All logs",
+            logs,
+            StatusCodes.OK
+        )
     
+    except Exception as e:
+        return error_response(
+            f"Error fetching logs: {e}",
+            None,
+            StatusCodes.SERVER_ERROR
+        )
+
+
 @logging_bp.route('/logs/<int:user_id>', methods=['GET'])
 @swag_from({
     'tags': ['Logging'],
@@ -168,15 +193,23 @@ def get_logs_by_user_route(user_id):
         logs = get_logs_by_user(user_id)
 
         if not logs:
-            return jsonify({"status": "error", "message": "No logs found for this user"}), 404
+            return success_response(
+                f"No logs found for user {user_id}",
+            )
 
-        return jsonify(logs), 200
+        return success_response(
+            f"Logs for user {user_id}",
+            logs,
+        )
     except Exception as e:
-        print(f"Error fetching logs for user {user_id}: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return error_response(
+            f"Error fetching logs for user {user_id}: {e}",
+            None,
+            StatusCodes.SERVER_ERROR
+        )
     
 
-@logging_bp.route('/log-suggestion', methods=['POST'])
+@logging_bp.route('/log/suggestion', methods=['POST'])
 @swag_from({
     'tags': ['Logging'],
     'summary': 'Log a suggestion',
@@ -261,10 +294,11 @@ def log_suggestion_route():
     missing_fields = [field for field in required_fields if field not in data]
 
     if missing_fields:
-        return jsonify({
-            'status': 'error',
-            'message': f'Missing required fields: {", ".join(missing_fields)}'
-        }), 400
+        return error_response(
+            f"Missing required fields: {', '.join(missing_fields)}",
+            None,
+            StatusCodes.BAD_REQUEST
+        )
 
     suggestion = {
         'prompt': data['prompt'],
@@ -274,24 +308,16 @@ def log_suggestion_route():
     }
 
     try:
-        logged_suggestion = log_suggestion(suggestion)
+        log_suggestion(suggestion)
 
-        data = {
-            'prompt': logged_suggestion['prompt'],
-            'suggestionText': logged_suggestion['suggestion_text'],
-            'hasBug': logged_suggestion['has_bug'],
-            'model': logged_suggestion['model'],
-            'id': logged_suggestion['id']
-        }
-
-        return jsonify({
-            'status': 'success',
-            'data': data
-        }), 200
-
+        return success_response(
+            "Logged suggestion",
+            StatusCodes.CREATED
+        )
+    
     except Exception as e:
-        print(f"Error logging suggestion: {e}")
-        return jsonify({
-            'status': 'error',
-            'message': 'Internal server error'
-        }), 500
+        return error_response(
+            f"Error logging event: {e}",
+            None,
+            StatusCodes.SERVER_ERROR
+        )

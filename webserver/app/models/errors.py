@@ -1,20 +1,11 @@
-from enum import Enum
-
-
-class StatusCodes(Enum):
-    OK = 200
-    CREATED = 201
-    BAD_REQUEST = 400
-    UNAUTHORIZED = 401
-    NOT_FOUND = 404
-    SERVER_ERROR = 500
-    NOT_IMPLEMENTED = 501
+from app.models.response import StatusCodes
 
 class BaseError(Exception):
     """Base class for custom errors."""
     def __init__(self, message, status_code=StatusCodes.BAD_REQUEST):
         self.message = message
         self.status_code = status_code
+        print("ERROR: " + message)
         super().__init__(message)
 
 
@@ -40,3 +31,7 @@ class AuthenticationError(BaseError):
     """Raised for authentication failures."""
     def __init__(self, message="Authentication failed"):
         super().__init__(message, StatusCodes.UNAUTHORIZED)
+
+class ModelError(BaseError):
+    def __init__(self, message="Suggestion generation failed"):
+        super().__init__(message, StatusCodes.SERVER_ERROR)

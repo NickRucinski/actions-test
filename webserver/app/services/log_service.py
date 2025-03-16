@@ -1,13 +1,17 @@
 from app.controllers.database import client
+from app.models.response import *
+
+
 
 def log_event(event):
     """Logs an event to the database."""
     try:
-        response = client.table("logs").insert(event).execute()
-        print(f"LOGGED EVENT: {event}")
+        client.table("logs").insert(event).execute()
+        
     except Exception as e:
         print(f"Error logging event: {e}")
         raise e
+
 
 def log_suggestion(suggestion):
     """
