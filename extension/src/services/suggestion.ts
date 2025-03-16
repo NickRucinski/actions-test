@@ -8,6 +8,7 @@ import { logSuggestionEvent } from './log';
  * whether it contains a bug, and the start time of the suggestion process. 
  */
 let suggestionContext = {
+    suggestions: [] as string[],
     suggestionId: "",
     hasBug: false,
     startTime: 0
@@ -54,13 +55,15 @@ export async function provideInlineCompletionItems(
                     const { suggestions, suggestionId, hasBug } = result.data;
 
                     suggestionContext = { 
+                        suggestions,
                         suggestionId, 
                         hasBug,
                         startTime: Date.now()
                     };
 
+                    const responseSuggestions = hasBug ? [suggestions[1]] : [suggestions[0]];
                     // Create InlineCompletionItems
-                    const completionItems = suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion));
+                    const completionItems = responseSuggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion));
 
                     resolve(completionItems);
                 } else {
@@ -103,22 +106,21 @@ export const acceptSuggestion = vscode.commands.registerCommand(
                 'Ignore'
             ).then(async (selection) => {
                 if (selection === 'Review Code') {
-                    if (selection === 'Review Code') {
-                        // Get the original code (before the suggestion)
-                        const rigthCode = "This is the right code";
-    
-                        // Get the suggested code (from the suggestion context)
-                        const wrongCode = "This is the wrong code";
-    
-                        // Create a Webview to display the code comparison
-                        createCodeComparisonWebview(rigthCode, wrongCode);
-                    }
+                    // Get the original code (before the suggestion)
+                    const rigthCode = suggestionContext.suggestions[0];
+
+                    // Get the suggested code (from the suggestion context)
+                    const wrongCode = suggestionContext.suggestions[1];
+
+                    // Create a Webview to display the code comparison
+                    createCodeComparisonWebview(rigthCode, wrongCode);
+
+                    resetSuggestionContext();
                 }
             });
         }
 
         logSuggestionEvent(true, suggestionContext);
-        resetSuggestionContext();
     }
 );
 
@@ -145,6 +147,7 @@ export const rejectSuggestion = vscode.commands.registerCommand(
  */
 const resetSuggestionContext = () => {
     suggestionContext = {
+        suggestions: [],
         suggestionId: "",
         hasBug: false,
         startTime: 0

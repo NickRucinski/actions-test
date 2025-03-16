@@ -63,11 +63,11 @@ const getWebviewContent = (rigthCode: string, wrongCode: string): string => {
         </head>
         <body>
             <div class="code-container">
-                <h3>Original Code</h3>
+                <h3>Correct Code</h3>
                 <pre>${escapeHtml(rigthCode)}</pre>
             </div>
             <div class="code-container">
-                <h3>Suggested Code</h3>
+                <h3>Incorrect Code</h3>
                 <pre>${escapeHtml(wrongCode)}</pre>
             </div>
         </body>

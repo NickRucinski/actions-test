@@ -33,7 +33,6 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 }
 
-
 // Debug command to force a fetch using input from the user.
 const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch', async () => {
     const userInput = await vscode.window.showInputBox({
