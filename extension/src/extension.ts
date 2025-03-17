@@ -3,6 +3,8 @@ import { fetchSuggestions, trackEvent } from './api';
 import { checkAndStoreSupabaseSecrets, getSupabaseClient } from './supabaseClient';
 import * as dotenv from 'dotenv';
 import { LogData, LogEvent } from './types/event';
+import { getIncorrectChoices, trackIncorrectChoices } from './incorrectTracker';
+
 
 /** Stores the last used prompt to prevent redundant requests */
 let lastPrompt = "";
@@ -55,6 +57,20 @@ export async function activate(context: vscode.ExtensionContext) {
     // Sign in with email command 
     context.subscriptions.push(
         vscode.commands.registerCommand('copilotClone.signIn', () => signIn(context))
+    );
+
+    // Show incorrect choices
+    context.subscriptions.push(
+        vscode.commands.registerCommand('copilotClone.viewIncorrectChoices', async () => {
+            const userId = "12345";
+            const incorrectChoices = getIncorrectChoices(userId);
+            
+            if (incorrectChoices.length === 0){
+                vscode.window.showInformationMessage("User does has not chosen an incorrect code suggestion.")
+            } else {
+                vscode.window.showInformationMessage(`Incorrect Choices:\n${incorrectChoices.map(choice => `- ${choice.suggestion}`).join("\n")}`);
+            }
+        })
     );
     
     // Inline completion provider
@@ -307,6 +323,11 @@ function handleTextChange(event: vscode.TextDocumentChangeEvent) {
         };
 
         trackEvent(logData);
+
+        //Track if the code that was not fully accepted was an incorrect suggestion.
+        if(!isFullyAccepted){
+            trackIncorrectChoices("12345", lastSuggestion);
+        }
         
         suggestionStartTime.delete(suggestionId);
         lastSuggestion = "";
