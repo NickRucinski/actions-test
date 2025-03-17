@@ -75,6 +75,7 @@
 <span class="n">docs_bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;docs&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">docs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;docs/build/html&#39;</span><span class="p">)</span>
+<span class="n">tsdocs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;docs/tsdoc&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="serve_docs">
 <a class="viewcode-back" href="../../index.html#routes.docs.serve_docs">[docs]</a>
@@ -104,6 +105,36 @@
 <span class="sd">    Serves static assets for Sphinx documentation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">docs_path</span><span class="p">,</span> <span class="s1">&#39;_static&#39;</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="serve_tsdocs">
+<a class="viewcode-back" href="../../index.html#routes.docs.serve_tsdocs">[docs]</a>
+<span class="nd">@docs_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/tsdocs/&lt;path:filename&gt;&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">serve_tsdocs</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serves the TypeDoc-generated HTML documentation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">tsdocs_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="docs_tsindex">
+<a class="viewcode-back" href="../../index.html#routes.docs.docs_tsindex">[docs]</a>
+<span class="nd">@docs_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/tsdocs/&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">docs_tsindex</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Redirects to the main TypeDoc documentation page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">tsdocs_path</span><span class="p">,</span> <span class="s2">&quot;index.html&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="serve_tsstatic">
+<a class="viewcode-back" href="../../index.html#routes.docs.serve_tsstatic">[docs]</a>
+<span class="nd">@docs_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/tsdocs/assets/&lt;path:filename&gt;&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">serve_tsstatic</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serves static assets for TypeDoc documentation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tsdocs_path</span><span class="p">,</span> <span class="s1">&#39;assets&#39;</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span></div>
 
 </pre></div>
 
