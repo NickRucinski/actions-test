@@ -4,7 +4,7 @@ name: Documentation
 
 on:
   push:
-    branches: [ "main", "Github-Actions" ]
+    branches: [ "main", "dev", "Github-Actions" ]
 
 jobs:
   python-docs:
@@ -26,12 +26,11 @@ jobs:
       - name: Generate Python documentation
         run: |
           cd webserver/docs
-          make html
+          python -m sphinx.cmd.build -b html source build
       - name: Upload flaskdocs
         run: |
           rm -rf documentation/static/flaskdoc
-          mv webserver/docs/build/html documentation/static/flaskdoc
-          ls documentation/static/
+          mv webserver/docs/build documentation/static/flaskdoc
       - name: Generate OpenAPI documentation
         run: |
           curl -L -o documentation/static/apispec_1.json https://ai.nickrucinski.com/apispec_1.json

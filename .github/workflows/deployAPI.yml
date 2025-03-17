@@ -2,7 +2,7 @@ name: Deploy to Self-Hosted Server
 
 on:
     push:
-        branches: ["dev", "Github-Actions"]
+        branches: ["main", "dev", "Github-Actions"]
 
 jobs:
     deploy:
