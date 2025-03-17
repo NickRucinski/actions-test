@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from app.services.suggestion_service import getSuggestion
 from app.models.response import *
+from app.models.status_codes import StatusCodes
 from flasgger import swag_from
 
 suggestions_bp = Blueprint('suggestions', __name__)
@@ -80,7 +81,7 @@ def generate_suggestion_route():
     """
     data = request.json
     prompt = data.get("prompt", "")
-    model_name = data.get("model", "ollama")
+    model_name = data.get("model", "codellama")
     temperature = data.get("temperature", 0.2)
     top_p = data.get("top_p", 1)
     top_k = data.get("top_k", 0)
@@ -105,16 +106,15 @@ def generate_suggestion_route():
             max_tokens=max_tokens,
             is_correct=is_correct
         )
-
         return success_response(
             "AI Suggestions",
-            { "suggestions": [response["suggestions"]]},
+            { "suggestions": [response]},
             StatusCodes.OK
         )
     
     except Exception as e:
         return error_response(
-            e.message,
+            str(e),
             None,
-            e.status_code
+            StatusCodes.SERVER_ERROR
         )

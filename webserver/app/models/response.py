@@ -1,17 +1,6 @@
 from app.models.errors import StatusCodes
 from flask import jsonify
-from enum import Enum
-
-
-
-class StatusCodes(Enum):
-    OK = 200
-    CREATED = 201
-    BAD_REQUEST = 400
-    UNAUTHORIZED = 401
-    NOT_FOUND = 404
-    SERVER_ERROR = 500
-    NOT_IMPLEMENTED = 501
+from app.models.status_codes import StatusCodes
 
 
 def success_response(
@@ -23,7 +12,7 @@ def success_response(
         "status": "Success",
         "message": message,
         "data": data,
-    }), status_code
+    }), status_code.value
 
 
 def error_response(
@@ -35,4 +24,4 @@ def error_response(
         "status": "Error",
         "message": message,
         "data": data,
-    }), status_code
+    }), status_code.value

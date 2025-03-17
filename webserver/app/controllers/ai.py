@@ -4,7 +4,7 @@ from enum import Enum
 from werkzeug.local import LocalProxy
 
 OLLAMA_URL = "http://localhost:11434/api/generate"  
-DEFAULT_MODEL_NAME = "copilot-style-codellama:latest"
+DEFAULT_MODEL_NAME = "codellama:latest"
 
 # system command to create a special AI model
 # {

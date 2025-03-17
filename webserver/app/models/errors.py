@@ -1,4 +1,6 @@
-from app.models.response import StatusCodes
+from app.models.status_codes import StatusCodes
+
+
 
 class BaseError(Exception):
     """Base class for custom errors."""

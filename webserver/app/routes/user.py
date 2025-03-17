@@ -1,7 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from app.services.user_service import get_user_by_id, create_user
 from app.models.response import *
 from flasgger import swag_from
+from app.models.status_codes import StatusCodes
 
 
 
@@ -146,7 +147,7 @@ def create_user_route():
     password = data["password"]
 
     try:
-        response = create_user(first_name, last_name, email, password)
+        create_user(first_name, last_name, email, password)
         return success_response(
             "User created successfully",
             None,
@@ -157,6 +158,6 @@ def create_user_route():
         return error_response(
             "Error creating user",
             {
-                "error": e
+                "error": str(e)
             }
         )

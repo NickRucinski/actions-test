@@ -50,24 +50,21 @@ def create_user(first_name: str, last_name: str, email: str, password: str):
         Exception: If there is an issue with database insertion.
     """
     try:
-        existing_user = client.table("users").select("id").eq("email", email).execute()
-        if existing_user.data:
-            raise UserAlreadyExistsError()
-
+        if client is None:
+            raise RuntimeError("Database client is not initialized.")
+        
         hashed_password = User.hash_password(password)
 
         response = client.table("users").insert({
             "first_name": first_name,
             "last_name": last_name,
             "email": email,
-            "password": hashed_password
+            #"password": hashed_password
         }).execute()
-
-        if response.error:
-            raise DatabaseError(f"Error creating user: {response.error}")
 
         return response.data[0]
     
     except Exception as e:
+        print("In create user")
         print(f"Error while creating user: {e}")
         raise e

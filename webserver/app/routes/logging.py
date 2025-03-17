@@ -2,6 +2,7 @@ from flask import request, Blueprint
 from app.services.log_service import log_event, get_all_logs, get_logs_by_user, log_suggestion
 from flasgger import swag_from
 from app.models.response import *
+from app.models.status_codes import StatusCodes
 
 
 
@@ -21,10 +22,6 @@ logging_bp = Blueprint('logging', __name__)
             'schema': {
                 'type': 'object',
                 'properties': {
-                    'time_lapse': {
-                        'type': 'number',
-                        'example': 1708
-                        },
                     'event': {
                         'type': 'string',
                         'example': 'User logged in'
@@ -33,10 +30,11 @@ logging_bp = Blueprint('logging', __name__)
                         'type': 'object',
                         'example': {
                             'userID': 12345,
+                            'time_lapse': 1708
                             }
                         }
                 },
-                'required': ['event', 'timelapse', 'metadata']
+                'required': ['event', 'metadata']
             }
         }
     ],
@@ -56,7 +54,7 @@ logging_bp = Blueprint('logging', __name__)
                 'type': 'object',
                 'properties': {
                     'status': {'type': 'string', 'example': 'error'},
-                    'message': {'type': 'string', 'example': 'Missing required fields: event, text'}
+                    'message': {'type': 'string', 'example': 'Missing required fields: event'}
                 }
             }
         },
@@ -72,7 +70,7 @@ def log_event_route():
     """
     data = request.json
 
-    required_fields = ['time_lapse', 'event']
+    required_fields = ['event', 'metadata']
     missing_fields = [field for field in required_fields if field not in data]
 
     if missing_fields:
@@ -312,6 +310,7 @@ def log_suggestion_route():
 
         return success_response(
             "Logged suggestion",
+            None,
             StatusCodes.CREATED
         )
     

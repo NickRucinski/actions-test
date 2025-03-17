@@ -69,7 +69,7 @@ def get_logs_by_user(user_id):
         Exception: If there is an error fetching logs for the user.
     """
     try:
-        response = client.table("logs").select("*").eq("data->>user_id", str(user_id)).execute()
+        response = client.table("logs").select("*").eq("metadata->>user_id", str(user_id)).execute()
         return response.data
     except Exception as e:
         print(f"Error fetching logs for user {user_id}: {e}")

@@ -24,4 +24,4 @@ class Log:
         return self
     
     def to_json(self):
-        return jsonify(self.__dict__)
+        return jsonify(self)

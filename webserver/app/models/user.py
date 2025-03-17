@@ -1,13 +1,14 @@
-from flask import jsonify
 import bcrypt
 
 class User:
+    id: str
     created_at: str
     first_name: str
     last_name: str
     email: str
 
-    def __init__(self, created_at: str, first_name: str, last_name: str, email: str):
+    def __init__(self, id: str, created_at: str, first_name: str, last_name: str, email: str):
+        self.id = id
         self.created_at = created_at
         self.first_name = first_name
         self.last_name = last_name
@@ -17,7 +18,13 @@ class User:
         return self
     
     def to_json(self):
-        return jsonify(self.__dict__)
+        return {
+            "id": self.id,
+            "created_at": self.created_at,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email
+        }
 
     @staticmethod
     def hash_password(password: str) -> str:

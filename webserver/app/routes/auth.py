@@ -1,6 +1,7 @@
 from flask import request, render_template, Blueprint, redirect
 from app.services.auth_service import login, callback
 from app.models.response import *
+from app.models.status_codes import StatusCodes
 
 auth_bp = Blueprint('auth', __name__)
 
