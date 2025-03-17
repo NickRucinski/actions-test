@@ -78,7 +78,10 @@ documentation for details.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">project-copilot-clone-2</a><ul class="simple">
+<li class="toctree-l1"><a class="reference internal" href="modules.html">project-copilot-clone-2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.controllers.html">app.controllers package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.routes.html">app.routes package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html">tests package</a></li>
 </ul>
 </li>
 </ul>
@@ -86,6 +89,37 @@ documentation for details.</p>
 </section>
 <section id="module-app">
 <span id="modules"></span><h1>Modules<a class="headerlink" href="#module-app" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.FlaskSessionStorage">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">FlaskSessionStorage</span></span><a class="reference internal" href="_modules/app.html#FlaskSessionStorage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.FlaskSessionStorage" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SyncSupportedStorage</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.FlaskSessionStorage.get_item">
+<span class="sig-name descname"><span class="pre">get_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/app.html#FlaskSessionStorage.get_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.FlaskSessionStorage.get_item" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.FlaskSessionStorage.remove_item">
+<span class="sig-name descname"><span class="pre">remove_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/app.html#FlaskSessionStorage.remove_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.FlaskSessionStorage.remove_item" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.FlaskSessionStorage.set_item">
+<span class="sig-name descname"><span class="pre">set_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/app.html#FlaskSessionStorage.set_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.FlaskSessionStorage.set_item" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.create_app">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">create_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#create_app"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.create_app" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.getEnvironmentVars">
+<span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">getEnvironmentVars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app.html#getEnvironmentVars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#app.getEnvironmentVars" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 
 

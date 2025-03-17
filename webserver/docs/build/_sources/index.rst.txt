@@ -19,37 +19,8 @@ documentation for details.
 
 Modules
 =======
+
 .. automodule:: app
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: database
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: routes.logging
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: routes.suggestions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: routes.docs
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: routes.main_page
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: routes.user
    :members:
    :undoc-members:
    :show-inheritance:

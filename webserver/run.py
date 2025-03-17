@@ -4,9 +4,8 @@ import sys
 
 VENV_DIR = ".venv"
 DOCS_DIR = "docs"
-FLASK_APP = "app.app"
-FLASK_HOST = "0.0.0.0"
-FLASK_PORT = "5000"
+FLASK_PORT = "8001"
+TESTS_DIR = "tests"
 
 def activate_virtualenv():
     """Activate the virtual environment."""
@@ -22,27 +21,45 @@ def activate_virtualenv():
 
 def install_dependencies():
     """Install dependencies from requirements.txt."""
+    pip_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "pip3.exe" if os.name == "nt" else "pip3")
     if os.path.exists("requirements.txt"):
-        subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], check=True)
+        subprocess.run([pip_loc, "install", "-r", "requirements.txt"], check=True)
 
 def build_sphinx_docs():
     """Build Sphinx documentation."""
+    python_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "python.exe" if os.name == "nt" else "python")
     if os.path.exists(DOCS_DIR):
         print("Building Sphinx documentation...")
-        subprocess.run(["make", "html"], cwd=DOCS_DIR, check=True)
+        subprocess.run([python_loc, "-m", "sphinx.cmd.build", "-b", "html", "source", "build"], cwd=DOCS_DIR, check=True)
     else:
         print("Sphinx documentation directory not found.")
 
+def run_tests():
+    """Run the tests."""
+    pytest_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "pytest.exe" if os.name == "nt" else "pytest")
+    if os.path.exists(TESTS_DIR):
+        print("Runnning tests...")
+        subprocess.run([pytest_loc, TESTS_DIR, "-v"], check=True)
+    else:
+        print("Tests directory not found.")
+
 def run_flask():
     """Run the Flask application."""
-    env = os.environ.copy()
-    env["FLASK_APP"] = FLASK_APP
-    env["FLASK_ENV"] = "development"  # Change to 'production' if needed
-
-    subprocess.run([sys.executable, "-m", "flask", "run", "--host", FLASK_HOST, "--port", FLASK_PORT], env=env)
+    flask_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "flask.exe" if os.name == "nt" else "flask")
+    subprocess.run([flask_loc, "--app", "app", "run", "--debug", "--port", FLASK_PORT])
 
 if __name__ == "__main__":
     activate_virtualenv()
     install_dependencies()
-    build_sphinx_docs()
+
+    try:
+        build_sphinx_docs()
+    except:
+        print("Docs failed to build")
+
+    try:
+        run_tests()
+    except:
+        print("Tests failed")
+
     run_flask()
