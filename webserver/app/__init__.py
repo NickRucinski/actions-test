@@ -9,7 +9,7 @@ from app.routes import register_blueprints
 
 from flasgger import Swagger
 from gotrue import SyncSupportedStorage
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 
 PORT = 8001
 
@@ -19,6 +19,7 @@ def getEnvironmentVars(app):
     SUPABASE_URL = os.getenv("SUPABASE_URL")
     SUPABASE_KEY = os.getenv("SUPABASE_KEY")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
     if not SUPABASE_URL or not SUPABASE_KEY:
         raise ValueError("Missing SUPABASE_URL or SUPABASE_KEY. Check your .env file.")
@@ -29,6 +30,7 @@ def getEnvironmentVars(app):
     app.config["SUPABASE_URL"] = SUPABASE_URL
     app.config["SUPABASE_KEY"] = SUPABASE_KEY
     app.config["OPENAI_API_KEY"] = OPENAI_API_KEY
+    app.config["GEMINI_API_KEY"] = GEMINI_API_KEY
 
 def create_app(test_config=None):
 

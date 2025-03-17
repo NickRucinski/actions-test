@@ -1,10 +1,11 @@
 import { LogData, LogEvent } from "../types/event";
 import { Result } from "../types/result";
 import { Suggestion, SuggestionResult } from "../types/suggetsion";
+import { hasBugRandomly } from "../utils/bug";
 import { trackEvent } from "./log";
 
 /* Endpoint for creating new AI suggestions */
-const AI_ENDPOINT: string = "https://ai.nickrucinski.com/suggestion";
+const AI_ENDPOINT: string = "http://127.0.0.1:8001/suggestion";
 
 /* Endpoint for saving AI suggestions */
 const LOG_SUGGESTION_ENDPOINT: string = "https://ai.nickrucinski.com/logs/suggestion";
@@ -21,14 +22,18 @@ const LOG_SUGGESTION_ENDPOINT: string = "https://ai.nickrucinski.com/logs/sugges
  * @returns {Promise<string[]>} A promise that resolves to an array of suggested strings.
  */
 export async function fetchSuggestions(
-    prompt: string, model = "ollama", 
-    temperature = 0.2, 
-    top_k = 0, 
-    top_p = 1, 
-    max_tokens = 256, 
-    endpoint=AI_ENDPOINT
+    prompt: string, 
+    model: string = "gemini", 
+    temperature: number = 0.2, 
+    top_k: number = 0, 
+    top_p: number = 1, 
+    max_tokens: number = 256, 
+    endpoint = AI_ENDPOINT
 ): Promise<Result<SuggestionResult>> {
     const startTime = Date.now();
+    const hasBug = hasBugRandomly();
+
+    console.log(`Generating suggestion ${hasBug ? "WITH" : "WITHOUT"} bug...`);
 
     try {
         const response = await fetch(endpoint, {
@@ -41,7 +46,6 @@ export async function fetchSuggestions(
 
         const endTime = Date.now(); 
         const elapsedTime = endTime - startTime;
-        let hasBug = false;
 
         if (!response.ok) {
             return { status: response.status, success: false, error: `Error: ${response.status} ${response.statusText}` };
@@ -53,10 +57,10 @@ export async function fetchSuggestions(
             const suggestion: Suggestion = {
                 id: "",
                 prompt,
-                suggestionText: data.suggestions.join(", "),
+                suggestionText: hasBug ? data.suggestions[1] : data.suggestions[0],
                 hasBug,
                 model: model
-            }
+            };
 
             const result = await saveSuggestionToDatabase(suggestion);
             const suggestionId = result.success && result.data ? result.data.id : "";
@@ -85,8 +89,6 @@ export async function fetchSuggestions(
  */
 async function saveSuggestionToDatabase(suggestion: Suggestion) : Promise<Result<Suggestion>> {
     const body = JSON.stringify(suggestion);
-
-    console.log("Saving suggestion...", body);
 
     try {
         const response = await fetch(LOG_SUGGESTION_ENDPOINT, {

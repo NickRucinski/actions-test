@@ -1,6 +1,8 @@
-from app.controllers.ai import client, vendors, good_command, bad_command, OLLAMA_URL
+from app.controllers.ai import client, gemini_client, vendors, good_command, bad_command, OLLAMA_URL
 from app.models.errors import ModelError
 import requests
+
+
 
 def getSuggestion(
     prompt: str,
@@ -109,3 +111,29 @@ def getSuggestionFromOllama(prompt: str, model_name: str, is_correct: bool):
     except Exception as e:
         print(f"Error fetching Ollama suggestion: {e}")
         raise ModelError(f"Error fetching Ollama suggestion: {e}")
+    
+def getSuggestionFromGoogle(prompt: str):
+    """
+    Sends the prompt to the model and returns an array of two code snippets:
+    one correct and one with a small logic error.
+
+    Args:
+        prompt (str): The code snippet to complete (e.g., "function add").
+
+    Returns:
+        list[str]: An array containing two code snippets.
+    """
+    # Combine the predefined instructions with the user's prompt
+    full_prompt = f"You are an AI that suggests code snippets in an array, one correct and one with a small logic error, without any explanations, comments, or markdown formatting. Only return the missing part, and do not repeat existing code. The snippets should not generate syntax errors.\n\n{prompt}"
+
+    # Send the prompt to the model
+    response = gemini_client.chat_session.send_message(full_prompt)
+
+    # Process the response to ensure it's in the correct format
+    suggestions = response.text.strip().split("\n\n")  # Split into correct and incorrect snippets
+
+    # Ensure the response is an array with exactly two elements
+    if len(suggestions) == 2:
+        return suggestions
+    else:
+        raise ValueError("Error: The response did not return exactly two snippets.")

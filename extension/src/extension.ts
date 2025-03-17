@@ -1,23 +1,9 @@
 import * as vscode from 'vscode';
-import { checkAndStoreSupabaseSecrets, getSupabaseClient } from './supabaseClient';
+import { checkAndStoreSupabaseSecrets, getSupabaseClient } from './auth/supabaseClient';
 import { LogData, LogEvent } from './types/event';
 import { trackEvent } from './api/log';
 import { fetchSuggestions } from './api/suggestion';
-
-/** Stores the last used prompt to prevent redundant requests */
-// let lastPrompt = "";
-
-/** Maps a unique suggestion ID to its timestamp for tracking elapsed time */
-const suggestionStartTime = new Map<string, number>();
-let suggestionContext = {
-    id: "",
-    hasBug: false
-};
-
-/** Timeout handler for debouncing text changes */
-let debounceTimer: NodeJS.Timeout | null = null;
-const TYPING_PAUSE_THRESHOLD = 2000;
-let lastRequest: { document: vscode.TextDocument; position: vscode.Position; context: vscode.InlineCompletionContext; token: vscode.CancellationToken } | null = null;
+import { acceptSuggestion, rejectSuggestion, provideInlineCompletionItems } from './services/suggestion';
 
 /**
  * Activates the VS Code extension.
@@ -47,33 +33,6 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 }
 
-const acceptSuggestion = vscode.commands.registerCommand(
-    'copilotClone.acceptInlineSuggestion',
-    async () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) return;
-
-        await vscode.commands.executeCommand('editor.action.inlineSuggest.commit');
-
-        logSuggestionEvent(true);
-        console.log("TESTING: Accepted Suggestion");
-    }
-);
-
-const rejectSuggestion = vscode.commands.registerCommand(
-    'copilotClone.rejectInlineSuggestion', 
-    async () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) return;
-
-        await vscode.commands.executeCommand('editor.action.inlineSuggest.hide');
-        await vscode.commands.executeCommand('hideSuggestWidget');
-
-        logSuggestionEvent(false);
-        console.log("TESTING: Rejected Suggestion");
-    }
-);
-
 // Debug command to force a fetch using input from the user.
 const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch', async () => {
     const userInput = await vscode.window.showInputBox({
@@ -97,27 +56,6 @@ const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch
         }
     }
 });
-
-function logSuggestionEvent(accepted: boolean) {
-    const suggestionId = suggestionContext.id;
-    const startTime = suggestionStartTime.get(suggestionId) || 0;
-    const elapsedTime = Date.now() - startTime;
-
-    // if (!lastSuggestion || lastSuggestion.trim() === "") {
-    //     console.log("No active suggestion, ignoring.");
-    //     return;
-    // }
-
-    const logEventType = accepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
-    const logData: LogData = {
-        event: logEventType,
-        
-        metadata: { time_lapse: elapsedTime, user_id: "12345", suggestionId, hasBug: false }
-    };
-
-    trackEvent(logData);
-    suggestionStartTime.delete(suggestionId);
-}
 
 /**
  * Handles user sign-in, allowing them to select between email or GitHub authentication.
@@ -152,13 +90,13 @@ async function signInOrSignUpEmail(context: vscode.ExtensionContext) {
         placeHolder: "Do you want to sign in or sign up?" 
     });
 
-    if (!action) return;
+    if (!action) {return;}
 
     const email = await vscode.window.showInputBox({ prompt: 'Enter your email', placeHolder: "sample@gmail.com" });
-    if (!email) return;
+    if (!email) {return;}
 
     const password = await vscode.window.showInputBox({ prompt: 'Enter your password', placeHolder: "password", password: true });
-    if (!password) return;
+    if (!password) {return;}
 
     let response;
     let logEventType = action === "Sign In" ? LogEvent.USER_LOGIN : LogEvent.USER_SIGNUP;
@@ -234,99 +172,11 @@ async function signInWithGithub(context: vscode.ExtensionContext){
 }
 
 /**
- * Provides inline completion items based on AI-generated suggestions.
- *
- * @param {vscode.TextDocument} document - The active text document.
- * @param {vscode.Position} position - The current cursor position.
- * @param {vscode.InlineCompletionContext} context - The inline completion context.
- * @param {vscode.CancellationToken} token - A cancellation token.
- * @returns {Promise<vscode.InlineCompletionList | vscode.InlineCompletionItem[]>} 
- * A list of inline completion items.
- */
-async function provideInlineCompletionItems(
-    document: vscode.TextDocument,
-    position: vscode.Position,
-    context: vscode.InlineCompletionContext,
-    token: vscode.CancellationToken
-): Promise<vscode.InlineCompletionList | vscode.InlineCompletionItem[]> {
-    return new Promise((resolve) => {
-        if (debounceTimer) {
-            clearTimeout(debounceTimer); // Clear the previous timer
-        }
-
-        // Store the latest request
-        lastRequest = { document, position, context, token };
-
-        // Set a new timer
-        debounceTimer = setTimeout(async () => {
-            if (lastRequest) {
-                const { document, position, context, token } = lastRequest;
-                const prompt = getPromptText(document, position);
-
-                if (!shouldFetchSuggestion(prompt)) {
-                    resolve([]); // Resolve with an empty array if no suggestion should be fetched
-                    return;
-                }
-
-                // lastPrompt = prompt;
-
-                console.log("Fetching suggestion for prompt:", prompt);
-
-                const settings = getSettings();
-                const result = await fetchSuggestions(prompt, settings["model"], settings["temperature"], settings["top_k"], settings["top_p"], settings["max_tokens"]);
-
-                if (result.success && result.data) {
-                    const { suggestions, suggestionId, hasBug } = result.data;
-                    suggestionContext = { 
-                        id: suggestionId, 
-                        hasBug
-                    };
-
-                    // Create InlineCompletionItems
-                    const completionItems = suggestions.map(suggestion => new vscode.InlineCompletionItem(suggestion));
-
-                    // Set suggestionStartTime when the suggestion is returned
-
-                    suggestionStartTime.set(suggestionId, Date.now());
-
-                    resolve(completionItems);
-                } else {
-                    resolve([]); // Resolve with an empty array if no suggestions are available
-                }
-            }
-        }, TYPING_PAUSE_THRESHOLD); // Debounce delay of 300ms
-    });
-}
-
-/**
- * Extracts the text from the beginning of the line to the current cursor position.
- *
- * @param {vscode.TextDocument} document - The active text document.
- * @param {vscode.Position} position - The current cursor position.
- * @returns {string} The extracted prompt text.
- */
-function getPromptText(document: vscode.TextDocument, position: vscode.Position): string {
-    return document.getText(new vscode.Range(position.with(undefined, 0), position));
-}
-
-/**
- * Determines whether a suggestion should be fetched based on the prompt.
- *
- * @param {string} prompt - The current prompt text.
- * @returns {boolean} True if a suggestion should be fetched, otherwise false.
- */
-function shouldFetchSuggestion(prompt: string): boolean {
-    if (!/\s$/.test(prompt)) { return false; } // Fetch only after a space or punctuation
-    //if (prompt === lastPrompt) { return false; } // Avoid redundant requests
-    return true;
-}
-
-/**
  * Gets the settings for the AI model from the VS Code workspace configuration.
  * 
  * @returns {Object} The settings for the AI model, including model selection, temperature, top_k, top_p, and max_tokens.
  */
-function getSettings() {
+export function getSettings() {
     const model = vscode.workspace.getConfiguration("copilot-clone").get<string>("general.modelSelection");
     const temperature = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.temperature");
     const top_k = vscode.workspace.getConfiguration("copilot-clone").get<number>("model.top_k");
