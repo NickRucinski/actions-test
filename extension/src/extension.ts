@@ -4,6 +4,20 @@ import { LogData, LogEvent } from './types/event';
 import { trackEvent } from './api/log';
 import { fetchSuggestions } from './api/suggestion';
 import { acceptSuggestion, rejectSuggestion, provideInlineCompletionItems } from './services/suggestion';
+import { getIncorrectChoices, trackIncorrectChoices } from './incorrectTracker';
+
+
+/** Stores the last used prompt to prevent redundant requests */
+let lastPrompt = "";
+
+/** Maps a unique suggestion ID to its timestamp for tracking elapsed time */
+let suggestionStartTime = new Map<string, number>();
+let lastSuggestion = "";
+
+/** Timeout handler for debouncing text changes */
+let debounceTimer: NodeJS.Timeout | null = null;
+const TYPING_PAUSE_THRESHOLD = 2000;
+let lastRequest: { document: vscode.TextDocument; position: vscode.Position; context: vscode.InlineCompletionContext; token: vscode.CancellationToken } | null = null;
 
 /**
  * Activates the VS Code extension.
@@ -56,6 +70,56 @@ const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch
         }
     }
 });
+        if (userInput) {
+            try {
+                const settings = getSettings();
+                const result = await fetchSuggestions(userInput, settings["model"], settings["temperature"], settings["top_k"], 
+                        settings["top_p"], settings["max_tokens"]);
+                        
+                if (result.success) {
+                    vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
+                } else {
+                    vscode.window.showErrorMessage(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage(`Error fetching suggestions: Unknown Error`);
+            }
+        }
+    });
+
+    // Sign in with email command 
+    context.subscriptions.push(
+        vscode.commands.registerCommand('copilotClone.signIn', () => signIn(context))
+    );
+
+    // Show incorrect choices
+    context.subscriptions.push(
+        vscode.commands.registerCommand('copilotClone.viewIncorrectChoices', async () => {
+            const userId = "12345";
+            const incorrectChoices = getIncorrectChoices(userId);
+            
+            if (incorrectChoices.length === 0){
+                vscode.window.showInformationMessage("User does has not chosen an incorrect code suggestion.")
+            } else {
+                vscode.window.showInformationMessage(`Incorrect Choices:\n${incorrectChoices.map(choice => `- ${choice.suggestion}`).join("\n")}`);
+            }
+        })
+    );
+    
+    // Inline completion provider
+    context.subscriptions.push(
+        vscode.languages.registerInlineCompletionItemProvider(
+            { scheme: 'file' },
+            {
+                provideInlineCompletionItems
+            }
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeTextDocument(handleTextChange)
+    );
+}
 
 /**
  * Handles user sign-in, allowing them to select between email or GitHub authentication.
