@@ -119,9 +119,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">run_tests</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the tests.&quot;&quot;&quot;</span>
     <span class="n">pytest_loc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">VENV_DIR</span><span class="p">,</span> <span class="s2">&quot;Scripts&quot;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span> <span class="k">else</span> <span class="s2">&quot;bin&quot;</span><span class="p">,</span> <span class="s2">&quot;pytest.exe&quot;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span> <span class="k">else</span> <span class="s2">&quot;pytest&quot;</span><span class="p">)</span>
+    <span class="n">coverage_loc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">VENV_DIR</span><span class="p">,</span> <span class="s2">&quot;Scripts&quot;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span> <span class="k">else</span> <span class="s2">&quot;bin&quot;</span><span class="p">,</span> <span class="s2">&quot;coverage.exe&quot;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span> <span class="k">else</span> <span class="s2">&quot;coverage&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">TESTS_DIR</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Runnning tests...&quot;</span><span class="p">)</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">pytest_loc</span><span class="p">,</span> <span class="n">TESTS_DIR</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">coverage_loc</span><span class="p">,</span> <span class="s2">&quot;run&quot;</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pytest&quot;</span><span class="p">,</span> <span class="n">TESTS_DIR</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">coverage_loc</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tests directory not found.&quot;</span><span class="p">)</span></div>
 
@@ -135,15 +137,8 @@
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">activate_virtualenv</span><span class="p">()</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Venv creation failed&quot;</span><span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">install_dependencies</span><span class="p">()</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dependencies not installed&quot;</span><span class="p">)</span>
+    <span class="n">activate_virtualenv</span><span class="p">()</span>
+    <span class="n">install_dependencies</span><span class="p">()</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">build_sphinx_docs</span><span class="p">()</span>

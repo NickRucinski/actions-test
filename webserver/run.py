@@ -37,9 +37,11 @@ def build_sphinx_docs():
 def run_tests():
     """Run the tests."""
     pytest_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "pytest.exe" if os.name == "nt" else "pytest")
+    coverage_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "coverage.exe" if os.name == "nt" else "coverage")
     if os.path.exists(TESTS_DIR):
         print("Runnning tests...")
-        subprocess.run([pytest_loc, TESTS_DIR, "-v"], check=True)
+        subprocess.run([coverage_loc, "run", "-m", "pytest", TESTS_DIR, "-v"], check=True)
+        subprocess.run([coverage_loc, "html"])
     else:
         print("Tests directory not found.")
 

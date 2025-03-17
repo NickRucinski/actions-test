@@ -126,8 +126,8 @@
         <span class="p">}),</span>
         <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/json&quot;</span>
     <span class="p">)</span>
-    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
-    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;logged&quot;</span><span class="p">}</span></div>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">201</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Success&quot;</span></div>
 
 
 <div class="viewcode-block" id="mock_requests_post">
@@ -152,7 +152,7 @@
     <span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
-    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;suggestions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Mocked response for: Hello&quot;</span><span class="p">]}</span></div>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;suggestions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Mocked response for: Hello&quot;</span><span class="p">]}</span></div>
 
 
 
@@ -166,7 +166,7 @@
     <span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
-    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;No prompt provided&quot;</span><span class="p">}</span></div>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;No prompt provided&quot;</span></div>
 
 </pre></div>
 
