@@ -1,4 +1,4 @@
-import { fetchSuggestions } from "../api";
+import { fetchSuggestions } from "../api/suggestion";
 
 describe("fetchSuggestions", () => {
     it("should return success with status 200", async () => {
@@ -14,7 +14,7 @@ describe("fetchSuggestions", () => {
 
         if (result.success) {
             expect(Array.isArray(result.data)).toBe(true);
-            expect(result.data.length).toBeGreaterThan(0);
+            expect(result.data.suggestions.length).toBeGreaterThan(0);
         }
     });
 
