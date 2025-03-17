@@ -111,8 +111,8 @@ function logSuggestionEvent(accepted: boolean) {
     const logEventType = accepted ? LogEvent.USER_ACCEPT : LogEvent.USER_REJECT;
     const logData: LogData = {
         event: logEventType,
-        time_lapse: elapsedTime,
-        metadata: { userId: "12345", suggestionId, hasBug: false }
+        
+        metadata: { time_lapse: elapsedTime, user_id: "12345", suggestionId, hasBug: false }
     };
 
     trackEvent(logData);
@@ -178,8 +178,7 @@ async function signInOrSignUpEmail(context: vscode.ExtensionContext) {
 
         const logData: LogData = {
             event: logEventType,
-            time_lapse: 0,
-            metadata: { userId: data.user?.id, email: data.user?.email }
+            metadata: { time_lapse: 0, user_id: data.user?.id, email: data.user?.email }
         };
 
         trackEvent(logData);
@@ -218,8 +217,8 @@ async function signInWithGithub(context: vscode.ExtensionContext){
             const user = sessionData.session.user;
             const logData: LogData = {
                 event: LogEvent.USER_AUTH_GITHUB,
-                time_lapse: 0,
-                metadata: { userId: user.id, email: user.email }
+                
+                metadata: { time_lapse: 0, user_id: user.id, email: user.email }
             };
     
             trackEvent(logData);

@@ -207,7 +207,7 @@ def get_logs_by_user_route(user_id):
         )
     
 
-@logging_bp.route('/log/suggestion', methods=['POST'])
+@logging_bp.route('/logs/suggestion', methods=['POST'])
 @swag_from({
     'tags': ['Logging'],
     'summary': 'Log a suggestion',

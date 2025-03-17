@@ -7,7 +7,7 @@ import { trackEvent } from "./log";
 const AI_ENDPOINT: string = "https://ai.nickrucinski.com/suggestion";
 
 /* Endpoint for saving AI suggestions */
-const LOG_SUGGESTION_ENDPOINT: string = "http://127.0.0.1:8001/log-suggestion";
+const LOG_SUGGESTION_ENDPOINT: string = "https://ai.nickrucinski.com/logs/suggestion";
 
 /**
  * Fetches AI-generated suggestions based on the given prompt.
@@ -63,8 +63,8 @@ export async function fetchSuggestions(
 
             const logData: LogData = {
                 event: LogEvent.MODEL_GENERATE,
-                time_lapse: elapsedTime,
-                metadata: { suggestion_id: suggestionId, has_bug: hasBug },
+                
+                metadata: { time_lapse: elapsedTime, suggestion_id: suggestionId, has_bug: hasBug },
             };
     
             trackEvent(logData);
