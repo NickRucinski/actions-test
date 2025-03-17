@@ -1,57 +1,67 @@
 import os
 import subprocess
 import sys
-import venv
 
-venv_dir = ".venv"
-requirements_file = "requirements.txt"
-docs_path = "docs"
+VENV_DIR = ".venv"
+DOCS_DIR = "docs"
+FLASK_PORT = "8001"
+TESTS_DIR = "tests"
 
+def activate_virtualenv():
+    """Activate the virtual environment."""
+    if not os.path.exists(VENV_DIR):
+        print("Virtual environment not found. Please create one with 'python -m venv venv'.")
+        sys.exit(1)
 
-def get_python_executable():
-    """Get the correct Python executable inside the virtual environment."""
-    if sys.platform == "win32":
-        return os.path.join(venv_dir, "Scripts", "python.exe")
-    return os.path.join(venv_dir, "bin", "python")
-
-
-def create_virtualenv():
-    """Create a virtual environment if it doesn't exist."""
-    if not os.path.exists(venv_dir):
-        print(f"Creating virtual environment in {venv_dir}...")
-        venv.create(venv_dir, with_pip=True)
+    activate_script = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "activate")
+    if os.name != "nt":
+        subprocess.run(["source", activate_script], shell=True, executable="/bin/bash")
     else:
-        print(f"Virtual environment already exists in {venv_dir}.")
+        subprocess.run(activate_script, shell=True)
 
+def install_dependencies():
+    """Install dependencies from requirements.txt."""
+    pip_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "pip3.exe" if os.name == "nt" else "pip3")
+    if os.path.exists("requirements.txt"):
+        subprocess.run([pip_loc, "install", "-r", "requirements.txt"], check=True)
 
-def install_requirements():
-    """Install dependencies from the requirements file."""
-    if os.path.exists(requirements_file):
-        print(f"Installing dependencies from {requirements_file}...")
-        subprocess.run([get_python_executable(), "-m", "pip", "install", "-r", requirements_file], check=True)
+def build_sphinx_docs():
+    """Build Sphinx documentation."""
+    python_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "python.exe" if os.name == "nt" else "python")
+    if os.path.exists(DOCS_DIR):
+        print("Building Sphinx documentation...")
+        subprocess.run([python_loc, "-m", "sphinx.cmd.build", "-b", "html", "source", "build"], cwd=DOCS_DIR, check=True)
     else:
-        print(f"{requirements_file} not found. Skipping dependency installation.")
+        print("Sphinx documentation directory not found.")
 
-
-def build_docs():
-    """Build the Sphinx documentation."""
-    if os.path.exists(docs_path):
-        print(f"Building Sphinx docs in {docs_path}...")
-        subprocess.run([get_python_executable(), "-m", "sphinx.cmd.build", "-b", "html", "source", "build"], cwd=docs_path, check=True)
+def run_tests():
+    """Run the tests."""
+    pytest_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "pytest.exe" if os.name == "nt" else "pytest")
+    coverage_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "coverage.exe" if os.name == "nt" else "coverage")
+    if os.path.exists(TESTS_DIR):
+        print("Runnning tests...")
+        subprocess.run([coverage_loc, "run", "-m", "pytest", TESTS_DIR, "-v"], check=True)
+        subprocess.run([coverage_loc, "html"])
     else:
-        print(f"Docs folder not found at {docs_path}. Skipping docs build.")
+        print("Tests directory not found.")
 
-
-def run_flask_app():
+def run_flask():
     """Run the Flask application."""
-    print("Starting Flask app...")
-    subprocess.run([get_python_executable(), "app.py"], check=True)
-
+    flask_loc = os.path.join(VENV_DIR, "Scripts" if os.name == "nt" else "bin", "flask.exe" if os.name == "nt" else "flask")
+    subprocess.run([flask_loc, "--app", "app", "run", "--debug", "--port", FLASK_PORT])
 
 if __name__ == "__main__":
-    create_virtualenv()
-    install_requirements()
-    build_docs()
+    activate_virtualenv()
+    install_dependencies()
 
-    # Run the Flask app
-    run_flask_app()
+    try:
+        build_sphinx_docs()
+    except:
+        print("Docs failed to build")
+
+    try:
+        run_tests()
+    except:
+        print("Tests failed")
+
+    run_flask()
