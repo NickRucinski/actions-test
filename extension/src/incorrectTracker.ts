@@ -1,5 +1,5 @@
 import { LogData, LogEvent } from "./types/event";
-import { trackEvent } from "./api";
+import { trackEvent } from "./api/log";
 
 interface IncorrectUserChoice {
     suggestion: string;
@@ -32,8 +32,8 @@ export function trackIncorrectChoices(userId: string, incorrectSuggestion: strin
     /** Create log for when the user does not accept a code suggestion from the model. */
     const logData: LogData = {
         event: LogEvent.USER_REJECT,
-        time_lapse: 0,
-        metadata: { userId, incorrectSuggestion, incorrectAttempt: incorrectUserChoices.get(userId)?.length || 1 },
+
+        metadata: { time_lapse: 0, userId, incorrectSuggestion, incorrectAttempt: incorrectUserChoices.get(userId)?.length || 1 },
     };
     trackEvent(logData);
 }

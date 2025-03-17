@@ -70,56 +70,19 @@ const testFetchCommand = vscode.commands.registerCommand('copilotClone.testFetch
         }
     }
 });
-        if (userInput) {
-            try {
-                const settings = getSettings();
-                const result = await fetchSuggestions(userInput, settings["model"], settings["temperature"], settings["top_k"], 
-                        settings["top_p"], settings["max_tokens"]);
-                        
-                if (result.success) {
-                    vscode.window.showInformationMessage(`Suggestions: ${result.data.join(", ")}`);
-                } else {
-                    vscode.window.showErrorMessage(`Error: ${result.error}`);
-                }
-            } catch (error) {
-                vscode.window.showErrorMessage(`Error fetching suggestions: Unknown Error`);
-            }
-        }
-    });
 
-    // Sign in with email command 
-    context.subscriptions.push(
-        vscode.commands.registerCommand('copilotClone.signIn', () => signIn(context))
-    );
-
-    // Show incorrect choices
-    context.subscriptions.push(
-        vscode.commands.registerCommand('copilotClone.viewIncorrectChoices', async () => {
-            const userId = "12345";
-            const incorrectChoices = getIncorrectChoices(userId);
-            
-            if (incorrectChoices.length === 0){
-                vscode.window.showInformationMessage("User does has not chosen an incorrect code suggestion.")
-            } else {
-                vscode.window.showInformationMessage(`Incorrect Choices:\n${incorrectChoices.map(choice => `- ${choice.suggestion}`).join("\n")}`);
-            }
-        })
-    );
+// Show incorrect choices
+const incorrectChoicesCommand = vscode.commands.registerCommand('copilotClone.viewIncorrectChoices', async () => {
+    const userId = "12345";
+    const incorrectChoices = getIncorrectChoices(userId);
     
-    // Inline completion provider
-    context.subscriptions.push(
-        vscode.languages.registerInlineCompletionItemProvider(
-            { scheme: 'file' },
-            {
-                provideInlineCompletionItems
-            }
-        )
-    );
+    if (incorrectChoices.length === 0){
+        vscode.window.showInformationMessage("User does has not chosen an incorrect code suggestion.")
+    } else {
+        vscode.window.showInformationMessage(`Incorrect Choices:\n${incorrectChoices.map(choice => `- ${choice.suggestion}`).join("\n")}`);
+    }
+});
 
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeTextDocument(handleTextChange)
-    );
-}
 
 /**
  * Handles user sign-in, allowing them to select between email or GitHub authentication.
