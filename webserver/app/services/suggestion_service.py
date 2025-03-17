@@ -49,6 +49,10 @@ def getSuggestion(
                 model_name=model_name,
                 is_correct=is_correct
             )
+        case vendors.Google:
+            return getSuggestionFromGoogle(
+                prompt
+            )
         case _:
             return getSuggestionFromOllama(
                 prompt,
