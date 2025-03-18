@@ -11,6 +11,8 @@ on:
 jobs:
   generate-docs:
     runs-on: ubuntu-latest
+    outputs:
+      artifact_id: ${{ steps.upload-docs.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v4
 
@@ -55,11 +57,12 @@ jobs:
           npx typedoc src --entryPointStrategy expand --plugin typedoc-theme-hierarchy --theme hierarchy --readme none
           cd ../
           mv webserver/docs/tsdoc documentation/static/tsdoc
-          
+
       - name: Debug Documentation Files
         run: ls -R documentation/static/
 
       - name: Upload Documentation Artifacts
+        id: upload-docs
         uses: actions/upload-artifact@v4
         with:
           name: documentation

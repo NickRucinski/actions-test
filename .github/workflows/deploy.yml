@@ -12,9 +12,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    needs: generate-docs
+    
     env:
       GIT_USER: ${{secrets.USER}}
       GIT_PASS: ${{secrets.TOKEN}}
+      ARTIFACT_ID: ${{ needs.generate-docs.outputs.artifact_id }}
 
     steps:
       - uses: actions/checkout@v3
