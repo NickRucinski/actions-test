@@ -68,6 +68,7 @@ jobs:
           path: documentation/static/
   deploy:
     runs-on: ubuntu-latest
+    needs: generate-docs
     env:
       GIT_USER: ${{secrets.USER}}
       GIT_PASS: ${{secrets.TOKEN}}
