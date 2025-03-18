@@ -25,9 +25,13 @@ suggestions_bp = Blueprint('suggestions', __name__)
                         'type': 'string',
                         'example': 'def add(a, b):'
                     },
+                    'vendor': {
+                        'type': 'string',
+                        'example': "ollama"
+                    },
                     'model': {
                         'type': 'string',
-                        'example': 'llama3.2:latest',
+                        'example': 'codellama:7b',
                         'description': 'The AI model to use for generating the suggestion.'
                     },
                     'isCorrect': {
@@ -81,12 +85,10 @@ def generate_suggestion_route():
     """
     data = request.json
     prompt = data.get("prompt", "")
-    model_name = data.get("model", "codellama")
-    temperature = data.get("temperature", 0.2)
-    top_p = data.get("top_p", 1)
-    top_k = data.get("top_k", 0)
-    max_tokens = data.get("max_tokens", 256)
-    is_correct = data.get("isCorrect", True)
+    vendor_name = data.get("vendor")
+    model_name = data.get("model")
+    model_params = data.get("params")
+    is_correct = data.get("is_correct")
 
     if not prompt:
         return error_response(
@@ -99,11 +101,9 @@ def generate_suggestion_route():
         # Call getSuggestion with all parameters, it will decide which model to use
         response = getSuggestion(
             prompt=prompt,
+            vendor=vendor_name,
             model_name=model_name,
-            temperature=temperature,
-            top_p=top_p,
-            top_k=top_k,
-            max_tokens=max_tokens,
+            model_params=model_params,
             is_correct=is_correct
         )
         return success_response(
