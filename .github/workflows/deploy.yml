@@ -9,6 +9,7 @@ on:
     workflows: ["Tests"]
     types:
       - completed
+
 jobs:
   generate-docs:
     runs-on: ubuntu-latest
@@ -20,11 +21,26 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Create .env file
+        run: |
+          cd webserver
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
+
       - name: Install dependencies
         run: |
           cd webserver
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Generate Coverage Report
+        run: |
+          cd webserver
+          coverage run -m pytest tests/ -v
+          coverage html
+          cd ../
+          rm -rf documentation/static/htmlcov
+          mv webserver/htmlcov documentation/static/
 
       - name: Generate Python documentation
         run: |
@@ -35,7 +51,7 @@ jobs:
         run: |
           rm -rf documentation/static/flaskdoc
           mv webserver/docs/build documentation/static/flaskdoc
-
+          
       - name: Generate OpenAPI documentation
         run: |
           curl -L -o documentation/static/apispec_1.json https://ai.nickrucinski.com/apispec_1.json
