@@ -5,57 +5,6 @@ info:
   title: Github Copilot Extension
   version: 0.0.1
 paths:
-  /log:
-    post:
-      description: Logs the event to the database.
-      parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            properties:
-              data:
-                example:
-                  userID: 12345
-                type: object
-              event:
-                example: User logged in
-                type: string
-              timestamp:
-                example: 1708401940
-                type: number
-            required:
-              - event
-              - timestamp
-              - data
-            type: object
-      responses:
-        '200':
-          description: Event logged successfully
-          schema:
-            properties:
-              status:
-                example: logged
-                type: string
-            type: object
-        '400':
-          description: Bad request or invalid input
-          schema:
-            properties:
-              message:
-                example: 'Missing required fields: event, text'
-                type: string
-              status:
-                example: error
-                type: string
-            type: object
-        '500':
-          description: Internal server error
-      summary: |-
-        Logs the event to the database.
-        See Swagger docs for more information.
-      tags:
-        - Logging
   /logs:
     get:
       description: Fetches all logged events from the database.
@@ -84,6 +33,56 @@ paths:
           description: Internal server error
       summary: |-
         Retrieve all logs in the database
+        See Swagger docs for more information.
+      tags:
+        - Logging
+    post:
+      description: Logs the event to the database.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            properties:
+              event:
+                example: User logged in
+                type: string
+              metadata:
+                example:
+                  userID: 12345
+                type: object
+              time_lapse:
+                example: 1708
+                type: number
+            required:
+              - event
+              - timelapse
+              - metadata
+            type: object
+      responses:
+        '200':
+          description: Event logged successfully
+          schema:
+            properties:
+              status:
+                example: logged
+                type: string
+            type: object
+        '400':
+          description: Bad request or invalid input
+          schema:
+            properties:
+              message:
+                example: 'Missing required fields: event, text'
+                type: string
+              status:
+                example: error
+                type: string
+            type: object
+        '500':
+          description: Internal server error
+      summary: |-
+        Logs the event to the database.
         See Swagger docs for more information.
       tags:
         - Logging
@@ -132,14 +131,22 @@ paths:
       consumes:
         - application/json
       description: >-
-        Sends a prompt to the locally running Ollama model and returns the
-        generated suggestion.
+        Sends a prompt to the locally running Ollama model with an optional
+        model name and correctness flag, returning the generated suggestion.
       parameters:
         - in: body
           name: body
           required: true
           schema:
             properties:
+              isCorrect:
+                description: A flag indicating whether the suggestion should be correct.
+                example: false
+                type: boolean
+              model:
+                description: The AI model to use for generating the suggestion.
+                example: llama3.2:latest
+                type: string
               prompt:
                 example: 'def add(a, b):'
                 type: string

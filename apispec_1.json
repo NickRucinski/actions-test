@@ -7,7 +7,48 @@
     "version": "0.0.1"
   },
   "paths": {
-    "/log": {
+    "/logs": {
+      "get": {
+        "description": "Fetches all logged events from the database.",
+        "responses": {
+          "200": {
+            "description": "List of logs",
+            "schema": {
+              "items": {
+                "properties": {
+                  "data": {
+                    "example": {
+                      "user_id": 12345
+                    },
+                    "type": "object"
+                  },
+                  "event": {
+                    "example": "user_login",
+                    "type": "string"
+                  },
+                  "id": {
+                    "example": 1,
+                    "type": "integer"
+                  },
+                  "timestamp": {
+                    "example": 1708401940,
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Retrieve all logs in the database\nSee Swagger docs for more information.",
+        "tags": [
+          "Logging"
+        ]
+      },
       "post": {
         "description": "Logs the event to the database.",
         "parameters": [
@@ -17,25 +58,25 @@
             "required": true,
             "schema": {
               "properties": {
-                "data": {
+                "event": {
+                  "example": "User logged in",
+                  "type": "string"
+                },
+                "metadata": {
                   "example": {
                     "userID": 12345
                   },
                   "type": "object"
                 },
-                "event": {
-                  "example": "User logged in",
-                  "type": "string"
-                },
-                "timestamp": {
-                  "example": 1708401940,
+                "time_lapse": {
+                  "example": 1708,
                   "type": "number"
                 }
               },
               "required": [
                 "event",
-                "timestamp",
-                "data"
+                "timelapse",
+                "metadata"
               ],
               "type": "object"
             }
@@ -75,49 +116,6 @@
           }
         },
         "summary": "Logs the event to the database.\nSee Swagger docs for more information.",
-        "tags": [
-          "Logging"
-        ]
-      }
-    },
-    "/logs": {
-      "get": {
-        "description": "Fetches all logged events from the database.",
-        "responses": {
-          "200": {
-            "description": "List of logs",
-            "schema": {
-              "items": {
-                "properties": {
-                  "data": {
-                    "example": {
-                      "user_id": 12345
-                    },
-                    "type": "object"
-                  },
-                  "event": {
-                    "example": "user_login",
-                    "type": "string"
-                  },
-                  "id": {
-                    "example": 1,
-                    "type": "integer"
-                  },
-                  "timestamp": {
-                    "example": 1708401940,
-                    "type": "number"
-                  }
-                },
-                "type": "object"
-              },
-              "type": "array"
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "summary": "Retrieve all logs in the database\nSee Swagger docs for more information.",
         "tags": [
           "Logging"
         ]
@@ -184,7 +182,7 @@
         "consumes": [
           "application/json"
         ],
-        "description": "Sends a prompt to the locally running Ollama model and returns the generated suggestion.",
+        "description": "Sends a prompt to the locally running Ollama model with an optional model name and correctness flag, returning the generated suggestion.",
         "parameters": [
           {
             "in": "body",
@@ -192,6 +190,16 @@
             "required": true,
             "schema": {
               "properties": {
+                "isCorrect": {
+                  "description": "A flag indicating whether the suggestion should be correct.",
+                  "example": false,
+                  "type": "boolean"
+                },
+                "model": {
+                  "description": "The AI model to use for generating the suggestion.",
+                  "example": "llama3.2:latest",
+                  "type": "string"
+                },
                 "prompt": {
                   "example": "def add(a, b):",
                   "type": "string"
