@@ -84,8 +84,16 @@ def getSuggestionFromOpenAI(
         if model_params is None:
             model_params = default_openai_parameters  # Use a default config
         
+        if is_correct:
+            system_message = "SYSTEM: Complete the following code correctly:"
+        else:
+            system_message = (
+                "SYSTEM: Complete the following code, but introduce a small mistake "
+                "(like a syntax error, incorrect logic, or missing a crucial step)."
+            )
+
         messages = [
-            {"role": "system", "content": "SYSTEM: Complete the following code:"},
+            {"role": "system", "content": system_message},
             {"role": "user", "content": prompt}
         ]
         with current_app.app_context():
