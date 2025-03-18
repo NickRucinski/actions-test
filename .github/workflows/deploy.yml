@@ -6,7 +6,7 @@ name: Deploy Docs
 
 on:
   workflow_run:
-    workflows: ["Documentation", "Tests"]
+    workflows: ["Tests"]
     types:
       - completed
 jobs:
