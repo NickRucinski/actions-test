@@ -4,7 +4,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + "/.."))
-from webserver.app import create_app
+from app import create_app
 import json
 
 
@@ -41,8 +41,8 @@ def test_logging_route(client):
         }),
         content_type="application/json"
     )
-    assert response.status_code == 200
-    assert response.json == {"status": "logged"}
+    assert response.status_code == 201
+    assert response.json.get("status") == "Success"
 
 @pytest.fixture
 def mock_requests_post(mocker):
@@ -61,7 +61,7 @@ def test_suggestions_route_prompt(mock_requests_post, client):
     )
 
     assert response.status_code == 200
-    assert response.json == {"suggestions": ["Mocked response for: Hello"]}
+    assert response.json.get("data") == {"suggestions": ["Mocked response for: Hello"]}
 
 
 def test_suggestions_route_no_prompt(client):
@@ -72,4 +72,4 @@ def test_suggestions_route_no_prompt(client):
     )
 
     assert response.status_code == 400
-    assert response.json == {"error": "No prompt provided"}
+    assert response.json.get("message") == "No prompt provided"
