@@ -37,7 +37,6 @@ def getSuggestion(
     # Choose model-specific logic
     match vendor_enum:
         case vendors.OpenAI:
-            print("Openai")
             return getSuggestionFromOpenAI(
                 prompt=prompt,
                 model=model_name,
@@ -45,7 +44,6 @@ def getSuggestion(
                 is_correct=is_correct
             )
         case vendors.Ollama:
-            print("Ollama")
             return getSuggestionFromOllama(
                 prompt=prompt,
                 model_name=model_name,
@@ -53,7 +51,6 @@ def getSuggestion(
                 is_correct=is_correct
             )
         case vendors.Google:
-            print("Google")
             return getSuggestionFromGoogle(
                 prompt=prompt,
                 model_name=model_name,
@@ -61,7 +58,6 @@ def getSuggestion(
                 is_correct=is_correct
             )
         case _:
-            print("Other")
             return getSuggestionFromOllama(
                 prompt=prompt,
                 model_name=model_name,
@@ -173,3 +169,57 @@ def getSuggestionFromGoogle(
         return suggestions
     else:
         raise ValueError("Error: The response did not return exactly two snippets.")
+    
+
+
+def getAvailableModels(vendor: vendors):
+    vendor_enum = vendors(vendor)
+
+    # Choose model-specific logic
+    match vendor_enum:
+        case vendors.OpenAI:
+            return getModelsFromOpenAI()
+        case vendors.Ollama:
+            return getModelsFromOllama()
+        case vendors.Google:
+            return getModelsFromGoogle()
+        case _:
+            raise ValueError(f"Unsupported vendor: {vendor}")
+
+
+def getModelsFromOpenAI():
+    try:
+        with current_app.app_context():
+            models = openai_client.models.list()  # Fetch models from OpenAI API
+            model_names = [model.id for model in models.data]  # Extract model names
+            return model_names
+
+    except Exception as e:
+        raise e
+    
+
+def getModelsFromOllama():
+        try:
+            response = requests.get("http://localhost:11434/api/tags")
+            
+            response.raise_for_status()
+
+            models = response.json()
+            print(models)
+
+            model_names = models.get("models", [])
+
+            return model_names
+
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Error fetching models from Ollama: {e}")
+
+
+def getModelsFromGoogle():
+    models_for_generate_content = []
+
+    for m in gemini_client.models.list():
+        if "generateContent" in m.supported_actions:
+            models_for_generate_content.append(m.name)
+
+    return models_for_generate_content

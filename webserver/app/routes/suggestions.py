@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from app.services.suggestion_service import getSuggestion
+from app.services.suggestion_service import getSuggestion, getAvailableModels
 from app.models.response import *
 from app.models.status_codes import StatusCodes
 from flasgger import swag_from
@@ -110,6 +110,67 @@ def generate_suggestion_route():
             "AI Suggestions",
             { "suggestions": [response]},
             StatusCodes.OK
+        )
+    
+    except Exception as e:
+        return error_response(
+            str(e),
+            None,
+            StatusCodes.SERVER_ERROR
+        )
+
+
+@suggestions_bp.route('/models', methods=['GET'])
+@swag_from({
+    'tags': ['Suggestions'],
+    'summary': 'Get all models available from a vendor',
+    'description': 'Lists all models available from the selected vendor',
+    'produces': ['application/json'],
+    'parameters': [
+        {
+            'name': 'vendor',
+            'in': 'query',  # Change from 'body' to 'query'
+            'required': True,
+            'type': 'string',
+            'example': "openai",
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'List of models from the vendor',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'models': {
+                        'type': 'array',
+                        'items': {'type': 'string'}
+                    }
+                }
+            }
+        },
+        '400': {
+            'description': 'Bad Request, missing vendor',
+        },
+        '500': {
+            'description': 'Internal server error',
+        }
+    }
+})
+def list_models_route():
+    vendor = request.args.get('vendor')  # Get vendor from query string
+
+    if not vendor:
+        return error_response(
+            "Vendor not included in request",
+            None,
+            StatusCodes.BAD_REQUEST
+        )
+
+    try:
+        models = getAvailableModels(vendor)  # Pass vendor to function
+        return success_response(
+            "Models List",
+            {"models": models}
         )
     
     except Exception as e:
